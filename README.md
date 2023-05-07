@@ -1,6 +1,9 @@
 # dt-bim-xr
 Digital Twins Prototyping for BIM with WebXR.
 
+# Demo
+
+https://wolfboyyang.github.io/dt-bim-xr/
 
 # Development
 

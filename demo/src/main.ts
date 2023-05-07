@@ -102,13 +102,16 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup WebXR
 
-  const xrHelper = await scene.createDefaultXRExperienceAsync({
+  scene.createDefaultVRExperience({
+    floorMeshes: [ground]
+  });
+  /*const xrHelper = await scene.createDefaultXRExperienceAsync({
     floorMeshes: [ground]
   });
   xrHelper.pointerSelection = <WebXRControllerPointerSelection>xrHelper.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
     gazeCamera: xrHelper.baseExperience.camera,
     xrInput: xrHelper.input
-  });
+  });*/
 
   //#endregion
 
