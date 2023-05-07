@@ -6,7 +6,7 @@ import {
   MeshBuilder,
   Scene,
   Vector3,
-  WebXRControllerPointerSelection,
+  //WebXRControllerPointerSelection,
   WebXRSessionManager
 } from "@babylonjs/core";
 
