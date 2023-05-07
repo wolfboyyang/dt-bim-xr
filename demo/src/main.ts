@@ -6,6 +6,7 @@ import {
   MeshBuilder,
   Scene,
   Vector3,
+  WebXRControllerPointerSelection,
   WebXRSessionManager
 } from "@babylonjs/core";
 
@@ -101,8 +102,12 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup WebXR
 
-  await scene.createDefaultXRExperienceAsync({
+  const xrHelper = await scene.createDefaultXRExperienceAsync({
     floorMeshes: [ground]
+  });
+  xrHelper.pointerSelection = <WebXRControllerPointerSelection>xrHelper.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
+    gazeCamera: xrHelper.baseExperience.camera,
+    xrInput: xrHelper.input
   });
 
   //#endregion
