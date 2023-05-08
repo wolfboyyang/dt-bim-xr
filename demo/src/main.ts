@@ -97,7 +97,6 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup WebXR
 
-  if (isVRSupported) {
     const xrHelper = await scene.createDefaultXRExperienceAsync({
       floorMeshes: [ground]
     });
@@ -137,7 +136,6 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
       }
     });
 
-  }
 
 
 
