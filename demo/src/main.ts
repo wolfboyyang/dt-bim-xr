@@ -1,13 +1,14 @@
 import './style.css'
 import {
   Engine,
-  FreeCamera,
+  DeviceOrientationCamera,
   HemisphericLight,
   MeshBuilder,
   Scene,
   Vector3,
-  //WebXRControllerPointerSelection,
-  WebXRSessionManager
+  WebXRControllerPointerSelection,
+  WebXRSessionManager,
+  WebXRState
 } from "@babylonjs/core";
 
 //#region WebXRPolyfill
@@ -73,7 +74,7 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   //#region Setup scene
 
   // This creates and positions a free camera (non-mesh)
-  let camera = new FreeCamera("camera1", new Vector3(0, 5, -10), scene);
+  let camera = new DeviceOrientationCamera("deviceCamera", new Vector3(0, 5, -10), scene);
 
   // This targets the camera to scene origin
   camera.setTarget(Vector3.Zero());
@@ -102,16 +103,32 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup WebXR
 
-  scene.createDefaultVRExperience({
+  await scene.createDefaultXRExperienceAsync({
     floorMeshes: [ground]
+  }).then((xrHelper) => {
+    xrHelper.pointerSelection = <WebXRControllerPointerSelection>xrHelper.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
+      gazeCamera: xrHelper.baseExperience.camera,
+      xrInput: xrHelper.input
+    });
+    
+    xrHelper.baseExperience.onStateChangedObservable.add((state) => {
+      switch (state) {
+          case WebXRState.IN_XR:
+              // XR is initialized and already submitted one frame
+              break;
+          case WebXRState.ENTERING_XR:
+              // xr is being initialized, enter XR request was made
+              break;
+          case WebXRState.EXITING_XR:
+              // xr exit request was made. not yet done.
+              break;
+          case WebXRState.NOT_IN_XR:
+              // self explanatory - either out or not yet in XR
+              break;
+      }
+  })
+  
   });
-  /*const xrHelper = await scene.createDefaultXRExperienceAsync({
-    floorMeshes: [ground]
-  });
-  xrHelper.pointerSelection = <WebXRControllerPointerSelection>xrHelper.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
-    gazeCamera: xrHelper.baseExperience.camera,
-    xrInput: xrHelper.input
-  });*/
 
   //#endregion
 
