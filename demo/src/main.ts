@@ -52,7 +52,8 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   // wait for the polyfill to kick in
   await xrPolyfillPromise;
   //console.log(navigator.xr); // should be there!
-  console.log("immersive-vr supported?", await WebXRSessionManager.IsSessionSupportedAsync("immersive-vr")); // should be true
+  const isVRSupported = await WebXRSessionManager.IsSessionSupportedAsync("immersive-vr");
+  console.log("immersive-vr supported?", isVRSupported);// should be true
 
   const engine = new Engine(canvas, true);
   // This creates a basic Babylon Scene object (non-mesh)
@@ -73,7 +74,7 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup scene
 
-  // This creates and positions a free camera (non-mesh)
+  // This creates and positions a DeviceOrientationCamera camera (non-mesh)
   let camera = new DeviceOrientationCamera("deviceCamera", new Vector3(0, 5, -10), scene);
 
   // This targets the camera to scene origin
@@ -102,33 +103,33 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   //const env = scene.createDefaultEnvironment();
 
   //#region Setup WebXR
+  if (isVRSupported) {
+    const xrHelper = await scene.createDefaultXRExperienceAsync({
+      floorMeshes: [ground]
+    });
 
-  await scene.createDefaultXRExperienceAsync({
-    floorMeshes: [ground]
-  }).then((xrHelper) => {
     xrHelper.pointerSelection = <WebXRControllerPointerSelection>xrHelper.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
       gazeCamera: xrHelper.baseExperience.camera,
       xrInput: xrHelper.input
     });
-    
+
     xrHelper.baseExperience.onStateChangedObservable.add((state) => {
       switch (state) {
-          case WebXRState.IN_XR:
-              // XR is initialized and already submitted one frame
-              break;
-          case WebXRState.ENTERING_XR:
-              // xr is being initialized, enter XR request was made
-              break;
-          case WebXRState.EXITING_XR:
-              // xr exit request was made. not yet done.
-              break;
-          case WebXRState.NOT_IN_XR:
-              // self explanatory - either out or not yet in XR
-              break;
+        case WebXRState.IN_XR:
+          // XR is initialized and already submitted one frame
+          break;
+        case WebXRState.ENTERING_XR:
+          // xr is being initialized, enter XR request was made
+          break;
+        case WebXRState.EXITING_XR:
+          // xr exit request was made. not yet done.
+          break;
+        case WebXRState.NOT_IN_XR:
+          // self explanatory - either out or not yet in XR
+          break;
       }
-  })
-  
-  });
+    });
+  }
 
   //#endregion
 
