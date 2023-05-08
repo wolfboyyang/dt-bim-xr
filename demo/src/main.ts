@@ -13,13 +13,6 @@ import {
 
 //#region WebXRPolyfill
 
-declare global {
-  interface Window {
-    WebXRPolyfill?: any;
-  }
-  class WebXRPolyfill { }
-}
-
 const xrPolyfillPromise = new Promise<void>((resolve) => {
   if (navigator.xr) {
     return resolve();
@@ -103,6 +96,7 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   //const env = scene.createDefaultEnvironment();
 
   //#region Setup WebXR
+
   if (isVRSupported) {
     const xrHelper = await scene.createDefaultXRExperienceAsync({
       floorMeshes: [ground]
@@ -113,13 +107,26 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
       xrInput: xrHelper.input
     });
 
-    xrHelper.baseExperience.onStateChangedObservable.add((state) => {
+    xrHelper.baseExperience.onStateChangedObservable.add(async (state) => {
       switch (state) {
         case WebXRState.IN_XR:
           // XR is initialized and already submitted one frame
           break;
         case WebXRState.ENTERING_XR:
           // xr is being initialized, enter XR request was made
+          const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
+          const iOS = typeof requestPermission === 'function';
+          if (iOS) {
+            const response = await requestPermission();
+            if (response === 'granted') {
+              // execute
+              console.log('motion & rotation permission granted');
+            }
+          } else {
+            // Motion and rotation not supported or permission not required
+            // Handle the situation accordingly
+            console.log('no motion & rotation permission');
+          }
           break;
         case WebXRState.EXITING_XR:
           // xr exit request was made. not yet done.
@@ -129,7 +136,10 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
           break;
       }
     });
+
   }
+
+
 
   //#endregion
 
