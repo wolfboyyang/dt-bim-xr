@@ -8,8 +8,14 @@ import {
   Vector3,
   WebXRControllerPointerSelection,
   WebXRSessionManager,
-  WebXRState
+  WebXRState,
 } from "@babylonjs/core";
+
+import {
+  AdvancedDynamicTexture,
+  Button,
+  Control,
+} from '@babylonjs/gui';
 
 //#region WebXRPolyfill
 
@@ -97,6 +103,7 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup WebXR
 
+  if (isVRSupported) {
     const xrHelper = await scene.createDefaultXRExperienceAsync({
       floorMeshes: [ground]
     });
@@ -113,19 +120,6 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
           break;
         case WebXRState.ENTERING_XR:
           // xr is being initialized, enter XR request was made
-          const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
-          const iOS = typeof requestPermission === 'function';
-          if (iOS) {
-            const response = await requestPermission();
-            if (response === 'granted') {
-              // execute
-              console.log('motion & rotation permission granted');
-            }
-          } else {
-            // Motion and rotation not supported or permission not required
-            // Handle the situation accordingly
-            console.log('no motion & rotation permission');
-          }
           break;
         case WebXRState.EXITING_XR:
           // xr exit request was made. not yet done.
@@ -135,9 +129,37 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
           break;
       }
     });
+  }
 
 
+  const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
+  const iOS = typeof requestPermission === 'function';
+  if (iOS) {
+    // GUI
+    const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    const permission_button = Button.CreateSimpleButton("but1", "Enable Rotation");
+    permission_button.width = "150px"
+    permission_button.height = "40px";
+    permission_button.color = "white";
+    permission_button.cornerRadius = 20;
+    permission_button.background = "green";
+    permission_button.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+    permission_button.onPointerUpObservable.add(async () => {
 
+      const response = await requestPermission();
+      if (response === 'granted') {
+        // execute
+        console.log('motion & rotation permission granted');
+        permission_button.isVisible = false;
+      }
+
+    });
+    advancedTexture.addControl(permission_button);
+  } else {
+    // Motion and rotation not supported or permission not required
+    // Handle the situation accordingly
+    console.log('not iOS or no motion & rotation permission');
+  }
 
   //#endregion
 
