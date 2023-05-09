@@ -3,7 +3,7 @@ Digital Twins Prototyping for BIM with WebXR.
 
 # Demo
 
-https://wolfboyyang.github.io/dt-bim-xr/
+https://dt-bim-xr.fly.dev/
 
 # Development
 
@@ -19,6 +19,12 @@ npm run dev
 ```sh
 cd demo
 npm run build
+```
+
+# Deploy to fly.io
+
+```sh
+flyctl deploy
 ```
 
 # Debug Inspector
