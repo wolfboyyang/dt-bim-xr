@@ -1,9 +1,11 @@
 # dt-bim-xr
 Digital Twins Prototyping for BIM with WebXR.
 
-# Demo
+# Live Demo
 
-https://dt-bim-xr.fly.dev/
+web-ifc-babylon: https://dt-bim-xr.fly.dev/
+
+demo: https://dt-bim-xr.fly.dev/demo
 
 # Development
 
