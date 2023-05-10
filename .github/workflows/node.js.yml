@@ -42,10 +42,12 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
+    # build demo
     - run: cd demo && npm ci
-    - run: cd demo && npm run build --if-present
+    - run: cd demo && npm run build -- --base=dt-bim-xr/demo
+    # build web-ifc-babylon
     - run: cd web-ifc-babylon && npm ci
-    - run: cd web-ifc-babylon && npm run build --if-present
+    - run: cd web-ifc-babylon && npm run build -- --base=dt-bim-xr
     - name: Upload a Build Artifact for demo
       uses: actions/upload-artifact@v3
       with:
@@ -66,7 +68,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download artifact
+      - name: Download artifact of demo
+        uses: actions/download-artifact@v3
+        with:
+          name: demo
+          path: './dt-bim-xr/demo'
+      - name: Download artifact of web-ifc-babylon
         uses: actions/download-artifact@v3
         with:
           name: web-ifc-babylon
