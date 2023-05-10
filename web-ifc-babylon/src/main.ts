@@ -106,7 +106,7 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   if (isVRSupported) {
     const xrHelper = await scene.createDefaultXRExperienceAsync({
-      floorMeshes: [<AbstractMesh>env!.ground]
+      floorMeshes: [env!.ground!]
     });
 
     xrHelper.pointerSelection = <WebXRControllerPointerSelection>xrHelper.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
@@ -166,7 +166,7 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup IFCLoader
 
-  var filesInput = new FilesInput(engine, scene, null, null, null, null, function () {
+  const filesInput = new FilesInput(engine, scene, null, null, null, null, function () {
     Tools.ClearLogCache()
   }, null, null);
 

@@ -2,10 +2,15 @@
 Digital Twins Prototyping for BIM with WebXR.
 
 # Live Demo
+Github Pages:
+- web-ifc-babylon: https://wolfboyyang.github.io/dt-bim-xr/
+- demo: https://wolfboyyang.github.io/dt-bim-xr/demo/ 
 
-web-ifc-babylon: https://dt-bim-xr.fly.dev/
+Or on fly.io:
 
-demo: https://dt-bim-xr.fly.dev/demo
+- web-ifc-babylon: https://dt-bim-xr.fly.dev/
+
+- demo: https://dt-bim-xr.fly.dev/demo
 
 # Development
 
