@@ -72,12 +72,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: demo
-          path: './dt-bim-xr/demo'
+          path: './demo'
       - name: Download artifact of web-ifc-babylon
         uses: actions/download-artifact@v3
         with:
           name: web-ifc-babylon
-          path: './dt-bim-xr'
+          path: '.'
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
