@@ -70,14 +70,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: web-ifc-babylon
-          path: './web-ifc-babylon'
+          path: './dt-bim-xr'
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           # Upload entire repository
-          path: './web-ifc-babylon'
+          path: '.'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
