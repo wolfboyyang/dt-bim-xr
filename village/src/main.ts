@@ -6,6 +6,7 @@ import {
   Scene,
   Vector3,
   ArcRotateCamera,
+  Sound,
 } from "@babylonjs/core";
 
 (async () => {
@@ -39,6 +40,8 @@ import {
   box.position.y = 0.5;
   const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
 
+  // try sample sound from https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3
+  //const sound = new Sound("name", "SoundHelix-Song-17.mp3", scene, null, { loop: true, autoplay: true });
 
   //#endregion
 
