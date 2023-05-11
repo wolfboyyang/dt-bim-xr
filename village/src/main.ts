@@ -36,6 +36,9 @@ import {
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
   const box = MeshBuilder.CreateBox("box", {});
+  box.position.y = 0.5;
+  const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
+
 
   //#endregion
 
