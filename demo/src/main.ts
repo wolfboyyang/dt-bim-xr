@@ -43,16 +43,16 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
 (async () => {
 
-  // create the canvas html element and attach it to the webpage
-  const canvas = <HTMLCanvasElement>document.getElementById("MainCanvas");
-
-  //#region Setup engine and scene
-
   // wait for the polyfill to kick in
   await xrPolyfillPromise;
   //console.log(navigator.xr); // should be there!
   const isVRSupported = await WebXRSessionManager.IsSessionSupportedAsync("immersive-vr");
   console.log("immersive-vr supported?", isVRSupported);// should be true
+
+  // create the canvas html element and attach it to the webpage
+  const canvas = <HTMLCanvasElement>document.getElementById("MainCanvas");
+
+  //#region Setup engine and scene
 
   const engine = new Engine(canvas, true);
   // This creates a basic Babylon Scene object (non-mesh)
@@ -68,10 +68,6 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
       scene.render()
     }
   })
-
-  //#endregion
-
-  //#region Setup scene
 
   // This creates and positions a DeviceOrientationCamera camera (non-mesh)
   let camera = new DeviceOrientationCamera("deviceCamera", new Vector3(0, 5, -10), scene);
@@ -98,8 +94,6 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   let ground = MeshBuilder.CreateGround("ground", { width: 6, height: 6 }, scene);
 
   //#endregion
-
-  //const env = scene.createDefaultEnvironment();
 
   //#region Setup WebXR
 
