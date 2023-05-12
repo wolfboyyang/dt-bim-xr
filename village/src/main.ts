@@ -36,8 +36,22 @@ import {
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
-  const box = MeshBuilder.CreateBox("box", {});
-  box.position.y = 0.5;
+  const box1 = MeshBuilder.CreateBox("box1", { width: 2, height: 1.5, depth: 3 });
+  box1.position.y = 0.75;
+  box1.rotation.y = Math.PI / 4;
+
+  const box2 = MeshBuilder.CreateBox("box2", {});
+  box2.scaling.x = 2;
+  box2.scaling.y = 1.5;
+  box2.scaling.z = 3;
+  box2.position = new Vector3(-3, 0.75, 0);
+
+  const box3 = MeshBuilder.CreateBox("box3", {});
+  box3.scaling = new Vector3(2, 1.5, 3);
+  box3.position.x = 3;
+  box3.position.y = 0.75;
+  box3.position.z = 0;
+
   const ground = MeshBuilder.CreateGround("ground", { width: 10, height: 10 });
 
   // try sample sound from https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3
