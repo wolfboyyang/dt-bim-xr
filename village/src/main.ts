@@ -47,6 +47,30 @@ import earcut from "earcut";
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
   SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "car.babylon").then(() => {
+    //car animatiion
+    const car = scene.getMeshByName("car");
+
+    const animCar = new Animation("carAnimation", "position.x", 30, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
+
+    const carKeys = [
+      {
+        frame: 0,
+        value: -4
+      },
+      {
+        frame: 150,
+        value: 4
+      },
+    ];
+
+    animCar.setKeys(carKeys);
+
+    car!.animations = [];
+    car!.animations.push(animCar);
+
+    scene.beginAnimation(car, 0, 150, true);
+
+    //wheel animation
     const wheelRB = scene.getMeshByName("wheelRB");
     const wheelRF = scene.getMeshByName("wheelRF");
     const wheelLB = scene.getMeshByName("wheelLB");
