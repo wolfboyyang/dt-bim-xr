@@ -17,7 +17,7 @@ import {
   InstancedMesh,
   SceneLoader,
 } from "@babylonjs/core";
-import earcut from "earcut";
+import "@babylonjs/loaders/glTF";
 
 (async () => {
 
@@ -42,40 +42,48 @@ import earcut from "earcut";
   })
 
   /**** Set camera and light *****/
-  const camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 10, new Vector3(0, 0, 0));
+  const camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0));
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
-  SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "car.babylon").then(() => {
-    //car animatiion
-    const car = scene.getMeshByName("car");
+  SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "village.glb");
+  SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "car.glb").then(() => {
+    const car = scene.getMeshByName("car")!;
+    car.rotation = new Vector3(Math.PI / 2, 0, -Math.PI / 2);
+    car.position.y = 0.16;
+    car.position.x = -3;
+    car.position.z = 8;
 
-    const animCar = new Animation("carAnimation", "position.x", 30, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
+    //car animation
+    const animCar = new Animation("carAnimation", "position.z", 30, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
 
     const carKeys = [
       {
         frame: 0,
-        value: -4
+        value: 8
       },
       {
         frame: 150,
-        value: 4
+        value: -7
+      },
+      {
+        frame: 200,
+        value: -7
       },
     ];
 
     animCar.setKeys(carKeys);
 
-    car!.animations = [];
-    car!.animations.push(animCar);
+    car.animations = [animCar];
 
-    scene.beginAnimation(car, 0, 150, true);
+    scene.beginAnimation(car, 0, 200, true);
 
     //wheel animation
     const wheelRB = scene.getMeshByName("wheelRB");
     const wheelRF = scene.getMeshByName("wheelRF");
     const wheelLB = scene.getMeshByName("wheelLB");
     const wheelLF = scene.getMeshByName("wheelLF");
-    console.log(wheelRB!.animations)
+    
     scene.beginAnimation(wheelRB, 0, 30, true);
     scene.beginAnimation(wheelRF, 0, 30, true);
     scene.beginAnimation(wheelLB, 0, 30, true);
