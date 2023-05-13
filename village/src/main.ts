@@ -12,6 +12,7 @@ import {
   Texture,
   Vector4,
   Mesh,
+  InstancedMesh,
 } from "@babylonjs/core";
 
 (async () => {
@@ -41,12 +42,7 @@ import {
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
-  const ground = buildGround();
-
-  const house = buildHouse();
-
-  const semiHouse = buildHouse(2);
-  semiHouse!.position.x = 2.5;
+  buildDwellings();
 
   // try sample sound from https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3
   //const sound = new Sound("name", "SoundHelix-Song-17.mp3", scene, null, { loop: true, autoplay: true });
@@ -56,6 +52,55 @@ import {
 })();
 
 /******Build Functions***********/
+function buildDwellings() {
+  const ground = buildGround();
+
+  const detached_house = buildHouse();
+  detached_house.rotation.y = -Math.PI / 16;
+  detached_house.position.x = -6.8;
+  detached_house.position.z = 2.5;
+
+  const semi_house = buildHouse(2);
+  semi_house.rotation.y = -Math.PI / 16;
+  semi_house.position.x = -4.5;
+  semi_house.position.z = 3;
+
+  //each entry is an array [house type, rotation, x, z]
+  const places = [
+    [1, -Math.PI / 16, -6.8, 2.5],
+    [2, -Math.PI / 16, -4.5, 3],
+    [2, -Math.PI / 16, -1.5, 4],
+    [2, -Math.PI / 3, 1.5, 6],
+    [2, 15 * Math.PI / 16, -6.4, -1.5],
+    [1, 15 * Math.PI / 16, -4.1, -1],
+    [2, 15 * Math.PI / 16, -2.1, -0.5],
+    [1, 5 * Math.PI / 4, 0, -1],
+    [1, Math.PI + Math.PI / 2.5, 0.5, -3],
+    [2, Math.PI + Math.PI / 2.1, 0.75, -5],
+    [1, Math.PI + Math.PI / 2.25, 0.75, -7],
+    [2, Math.PI / 1.9, 4.75, -1],
+    [1, Math.PI / 1.95, 4.5, -3],
+    [2, Math.PI / 1.9, 4.75, -5],
+    [1, Math.PI / 1.9, 4.75, -7],
+    [2, -Math.PI / 3, 5.25, 2],
+    [1, -Math.PI / 3, 6, 4],
+  ];
+
+  //Create instances from the first two that were built 
+  const houses: InstancedMesh[] = [];
+  for (let i = 0; i < places.length; i++) {
+    if (places[i][0] === 1) {
+      houses[i] = detached_house.createInstance("house" + i);
+    }
+    else {
+      houses[i] = semi_house.createInstance("house" + i);
+    }
+    houses[i].rotation.y = places[i][1];
+    houses[i].position.x = places[i][2];
+    houses[i].position.z = places[i][3];
+  }
+}
+
 function buildGround(): Mesh {
   //color
   const groundMat = new StandardMaterial("groundMat");
