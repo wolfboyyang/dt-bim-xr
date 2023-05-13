@@ -46,6 +46,7 @@ import earcut from "earcut";
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
   const car = buildCar();
+  car.rotation.x = -Math.PI / 2;
 
   //#endregion
 
@@ -69,9 +70,33 @@ function buildCar() {
 
   //back formed automatically
 
-  const car = MeshBuilder.ExtrudePolygon("car", { shape: outline, depth: 0.2 }, undefined, earcut);
+  //car face UVs
+  const faceUV = [
+    new Vector4(0, 0.5, 0.38, 1),
+    new Vector4(0, 0, 1, 0.5),
+    new Vector4(0.38, 1, 0, 0.5),
+  ];
+
+  //car material
+  const carMat = new StandardMaterial("carMat");
+  carMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/car.png");
+
+  const car = MeshBuilder.ExtrudePolygon("car", { shape: outline, depth: 0.2, faceUV, wrap: true}, undefined, earcut);
+  car.material = carMat;
+
+  //wheel face UVs
+  const wheelUV = [
+    new Vector4(0, 0, 1, 1),
+    new Vector4(0, 0.5, 0, 0.5),
+    new Vector4(0, 0, 1, 1),
+  ];
   
-  const wheelRB = MeshBuilder.CreateCylinder("wheelRB", { diameter: 0.125, height: 0.05 })
+  //wheel material
+  const wheelMat = new StandardMaterial("wheelMat");
+  wheelMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/wheel.png");
+
+  const wheelRB = MeshBuilder.CreateCylinder("wheelRB", { diameter: 0.125, height: 0.05, faceUV: wheelUV})
+  wheelRB.material = wheelMat;
   wheelRB.parent = car;
   wheelRB.position.z = -0.1;
   wheelRB.position.x = -0.2;
