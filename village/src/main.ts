@@ -1,5 +1,6 @@
 import './style.css'
 import {
+  Animation,
   Engine,
   HemisphericLight,
   PolygonMeshBuilder,
@@ -45,14 +46,14 @@ import earcut from "earcut";
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
-  const car = buildCar();
+  const car = buildCar(scene);
   car.rotation.x = -Math.PI / 2;
 
   //#endregion
 
 })();
 
-function buildCar() {
+function buildCar(scene: Scene) {
   //base
   const outline = [
     new Vector3(-0.3, 0, -0.1),
@@ -102,6 +103,28 @@ function buildCar() {
   wheelRB.position.x = -0.2;
   wheelRB.position.y = 0.035;
 
+  //Animate the Wheels
+  const animWheel = new Animation("wheelAnimation", "rotation.y", 30, Animation.ANIMATIONTYPE_FLOAT, Animation.ANIMATIONLOOPMODE_CYCLE);
+
+  const wheelKeys = [
+    //At the animation key 0, the value of rotation.y is 0
+    {
+      frame: 0,
+      value: 0
+    },
+    //At the animation key 30, (after 1 sec since animation fps = 30) the value of rotation.y is 2PI for a complete rotation
+    {
+      frame: 30,
+      value: 2 * Math.PI
+    }
+  ]; 
+
+  //set the keys
+  animWheel.setKeys(wheelKeys);
+
+  //Link this animation to a wheel
+  wheelRB.animations = [animWheel];
+
   const wheelRF = wheelRB.clone("wheelRF");
   wheelRF.position.x = 0.1;
 
@@ -110,6 +133,11 @@ function buildCar() {
 
   const wheelLF = wheelRF.clone("wheelLF");
   wheelLF.position.y = -0.2 - 0.035;
+
+  scene.beginAnimation(wheelRB, 0, 30, true);
+  scene.beginAnimation(wheelRF, 0, 30, true);
+  scene.beginAnimation(wheelLB, 0, 30, true);
+  scene.beginAnimation(wheelLF, 0, 30, true);
 
   return car;
 }
