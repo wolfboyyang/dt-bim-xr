@@ -52,6 +52,14 @@ import "@babylonjs/loaders/glTF";
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
+  const spriteManagerUFO = new SpriteManager("UFOManager", "https://assets.babylonjs.com/environments/ufo.png", 1, { width: 128, height: 76 }, scene);
+  const ufo = new Sprite("ufo", spriteManagerUFO);
+  ufo.playAnimation(0, 16, true, 125);
+  ufo.position.y = 5;
+  ufo.position.z = 0;
+  ufo.width = 2;
+  ufo.height = 1;
+
   const spriteManagerTrees = new SpriteManager("treesManager", "textures/palm.png", 2000, { width: 512, height: 1024 }, scene);
 
   //We create trees at random positions
