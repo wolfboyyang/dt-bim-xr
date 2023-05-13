@@ -19,6 +19,7 @@ import {
   Axis,
   Tools,
   Space,
+  CubeTexture,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 
@@ -48,6 +49,16 @@ import "@babylonjs/loaders/glTF";
   const camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0));
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
+
+  //Skybox
+  const skybox = MeshBuilder.CreateBox("skyBox", {size:150}, scene);
+  const skyboxMaterial = new StandardMaterial("skyBox", scene);
+  skyboxMaterial.backFaceCulling = false;
+  skyboxMaterial.reflectionTexture = new CubeTexture("textures/day", scene);
+  skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
+  skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
+  skyboxMaterial.specularColor = new Color3(0, 0, 0);
+  skybox.material = skyboxMaterial;
 
   const wireMat = new StandardMaterial("wireMat");
   wireMat.alpha = 0;
