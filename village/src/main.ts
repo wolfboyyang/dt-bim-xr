@@ -126,8 +126,12 @@ const buildSemiRoof = () => {
   const box = buildBox();
   const roof = buildRoof();
 
+  const house = Mesh.MergeMeshes([box, roof], true, false, undefined, false, true);
+
   const semiBox = buildSemiBox();
   const semiRoof = buildSemiRoof();
+
+  const semiHouse = Mesh.MergeMeshes([semiBox, semiRoof], true, false, undefined, false, true);
 
   // try sample sound from https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3
   //const sound = new Sound("name", "SoundHelix-Song-17.mp3", scene, null, { loop: true, autoplay: true });
