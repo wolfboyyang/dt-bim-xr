@@ -187,6 +187,22 @@ import "@babylonjs/loaders/glTF";
     })
   });
 
+  const fountainProfile = [
+    new Vector3(0, 0, 0),
+    new Vector3(0.5, 0, 0),
+    new Vector3(0.5, 0.2, 0),
+    new Vector3(0.4, 0.2, 0),
+    new Vector3(0.4, 0.05, 0),
+    new Vector3(0.05, 0.1, 0),
+    new Vector3(0.05, 0.8, 0),
+    new Vector3(0.15, 0.9, 0)
+  ];
+
+  //Create lathe
+  const fountain = MeshBuilder.CreateLathe("fountain", { shape: fountainProfile, sideOrientation: Mesh.DOUBLESIDE }, scene);
+  fountain.position.x = -4;
+  fountain.position.z = -6;
+
   //#endregion
 
 })();
