@@ -49,8 +49,24 @@ import "@babylonjs/loaders/glTF";
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
+  //Create Village ground
+  const groundMat = new StandardMaterial("groundMat");
+  groundMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/villagegreen.png");
+  groundMat.diffuseTexture.hasAlpha = true;
+
+  const ground = MeshBuilder.CreateGround("ground", {width:24, height:24});
+  ground.material = groundMat;
+
+  //large ground
+  const largeGroundMat = new StandardMaterial("largeGroundMat");
+  largeGroundMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/valleygrass.png");
+  
+  const largeGround = MeshBuilder.CreateGroundFromHeightMap("largeGround", "https://assets.babylonjs.com/environments/villageheightmap.png", {width:150, height:150, subdivisions: 20, minHeight:0, maxHeight: 10});
+  largeGround.material = largeGroundMat;
+  largeGround.position.y = -0.01;
+
   const wireMat = new StandardMaterial("wireMat");
-  wireMat.wireframe = true;
+  wireMat.alpha = 0;
 
   const hitBox = MeshBuilder.CreateBox("carbox", { width: 0.5, height: 0.6, depth: 4.5 });
   hitBox.material = wireMat;
@@ -102,8 +118,6 @@ import "@babylonjs/loaders/glTF";
     scene.beginAnimation(wheelLB, 0, 30, true);
     scene.beginAnimation(wheelLF, 0, 30, true);
   });
-
-  SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "village.glb");
 
   const walk = function (this, turn, dist) {
     this.turn = turn;
