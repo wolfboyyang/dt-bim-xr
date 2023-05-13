@@ -20,6 +20,8 @@ import {
   Tools,
   Space,
   CubeTexture,
+  Sprite,
+  SpriteManager,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 
@@ -50,8 +52,25 @@ import "@babylonjs/loaders/glTF";
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
+  const spriteManagerTrees = new SpriteManager("treesManager", "textures/palm.png", 2000, { width: 512, height: 1024 }, scene);
+
+  //We create trees at random positions
+  for (let i = 0; i < 500; i++) {
+    const tree = new Sprite("tree", spriteManagerTrees);
+    tree.position.x = Math.random() * (-30);
+    tree.position.z = Math.random() * 20 + 8;
+    tree.position.y = 0.5;
+  }
+
+  for (let i = 0; i < 500; i++) {
+    const tree = new Sprite("tree", spriteManagerTrees);
+    tree.position.x = Math.random() * (25) + 7;
+    tree.position.z = Math.random() * -35 + 8;
+    tree.position.y = 0.5;
+  }
+
   //Skybox
-  const skybox = MeshBuilder.CreateBox("skyBox", {size:150}, scene);
+  const skybox = MeshBuilder.CreateBox("skyBox", { size: 150 }, scene);
   const skyboxMaterial = new StandardMaterial("skyBox", scene);
   skyboxMaterial.backFaceCulling = false;
   skyboxMaterial.reflectionTexture = new CubeTexture("textures/day", scene);
@@ -70,7 +89,7 @@ import "@babylonjs/loaders/glTF";
   hitBox.position.z = -5;
 
   SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "valleyvillage.glb");
-  
+
   let carReady = false;
   SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "car.glb").then(() => {
     const car = scene.getMeshByName("car")!;
