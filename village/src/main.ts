@@ -49,22 +49,6 @@ import "@babylonjs/loaders/glTF";
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
 
-  //Create Village ground
-  const groundMat = new StandardMaterial("groundMat");
-  groundMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/villagegreen.png");
-  groundMat.diffuseTexture.hasAlpha = true;
-
-  const ground = MeshBuilder.CreateGround("ground", {width:24, height:24});
-  ground.material = groundMat;
-
-  //large ground
-  const largeGroundMat = new StandardMaterial("largeGroundMat");
-  largeGroundMat.diffuseTexture = new Texture("https://assets.babylonjs.com/environments/valleygrass.png");
-  
-  const largeGround = MeshBuilder.CreateGroundFromHeightMap("largeGround", "https://assets.babylonjs.com/environments/villageheightmap.png", {width:150, height:150, subdivisions: 20, minHeight:0, maxHeight: 10});
-  largeGround.material = largeGroundMat;
-  largeGround.position.y = -0.01;
-
   const wireMat = new StandardMaterial("wireMat");
   wireMat.alpha = 0;
 
@@ -74,8 +58,9 @@ import "@babylonjs/loaders/glTF";
   hitBox.position.y = 0.3;
   hitBox.position.z = -5;
 
+  SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "valleyvillage.glb");
+  
   let carReady = false;
-
   SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "car.glb").then(() => {
     const car = scene.getMeshByName("car")!;
     carReady = true;
@@ -89,15 +74,11 @@ import "@babylonjs/loaders/glTF";
     const carKeys = [
       {
         frame: 0,
-        value: 8
-      },
-      {
-        frame: 150,
-        value: -7
+        value: 10
       },
       {
         frame: 200,
-        value: -7
+        value: -15
       }
     ];
 
