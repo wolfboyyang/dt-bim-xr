@@ -24,6 +24,7 @@ import {
   SpriteManager,
   ParticleSystem,
   Color4,
+  PointerEventTypes,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 
@@ -206,7 +207,7 @@ import "@babylonjs/loaders/glTF";
   fountain.position.z = -6;
 
   // Create a particle system
-  var particleSystem = new ParticleSystem("particles", 5000, scene);
+  const particleSystem = new ParticleSystem("particles", 5000, scene);
 
   //Texture of each particle
   particleSystem.particleTexture = new Texture("textures/flare.png", scene);
@@ -236,7 +237,7 @@ import "@babylonjs/loaders/glTF";
   particleSystem.blendMode = ParticleSystem.BLENDMODE_ONEONE;
 
   // Set the gravity of all particles
-  particleSystem.gravity = new Vector3(0, -9.81/20, 0);
+  particleSystem.gravity = new Vector3(0, -9.81 / 20, 0);
 
   // Direction of each particle after it has been emitted
   particleSystem.direction1 = new Vector3(-2, 8, 2);
@@ -251,8 +252,32 @@ import "@babylonjs/loaders/glTF";
   particleSystem.maxEmitPower = 0.15;
   particleSystem.updateSpeed = 0.025;
 
-  // Start the particle system
-  particleSystem.start();
+  //Switch fountain on and off
+  let switched = false;
+  const pointerDown = (mesh) => {
+    if (mesh === fountain) {
+      switched = !switched;
+      if (switched) {
+        // Start the particle system
+        particleSystem.start();
+      }
+      else {
+        // Stop the particle system
+        particleSystem.stop();
+      }
+    }
+
+  }
+
+  scene.onPointerObservable.add((pointerInfo) => {
+    switch (pointerInfo.type) {
+      case PointerEventTypes.POINTERDOWN:
+        if (pointerInfo?.pickInfo?.hit) {
+          pointerDown(pointerInfo.pickInfo.pickedMesh)
+        }
+        break;
+    }
+  });
 
   //#endregion
 
