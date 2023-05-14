@@ -27,6 +27,8 @@ import {
   PointerEventTypes,
   SpotLight,
   BackgroundMaterial,
+  ShadowGenerator,
+  DirectionalLight,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import {
@@ -62,7 +64,8 @@ import {
   /**** Set camera and light *****/
   const camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0));
   camera.attachControl(canvas, true);
-  const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
+  const light = new DirectionalLight("light", new Vector3(0, -1, 1), scene);
+  light.position = new Vector3(0, 50, -100);
 
   // GUI
   const adt = AdvancedDynamicTexture.CreateFullscreenUI("UI");
@@ -142,7 +145,11 @@ import {
 
   SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "valleyvillage.glb").then(() => {
     (scene.getMeshByName("ground")!.material! as BackgroundMaterial).maxSimultaneousLights = 5;
+    scene.getMeshByName("ground")!.receiveShadows = true;
   });
+
+  // SChapter 7 - Adding Shadowshadow generator
+  const shadowGenerator = new ShadowGenerator(1024, light);
 
   let carReady = false;
   SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "car.glb").then(() => {
@@ -184,6 +191,8 @@ import {
     scene.beginAnimation(wheelLF, 0, 30, true);
   });
 
+  
+
   const walk = function (this, turn, dist) {
     this.turn = turn;
     this.dist = dist;
@@ -198,6 +207,8 @@ import {
   SceneLoader.ImportMeshAsync("him", "/scenes/Dude/", "Dude.babylon", scene).then((result) => {
     var dude = result.meshes[0];
     dude.scaling = new Vector3(0.008, 0.008, 0.008);
+
+    shadowGenerator.addShadowCaster(dude, true);
 
     dude.position = new Vector3(1.5, 0, -6.9);
     dude.rotate(Axis.Y, Tools.ToRadians(-90), Space.LOCAL);
