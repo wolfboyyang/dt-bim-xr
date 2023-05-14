@@ -232,7 +232,7 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   ];
 
   // Dude
-  SceneLoader.ImportMeshAsync("him", "/scenes/Dude/", "Dude.babylon", scene).then((result) => {
+  SceneLoader.ImportMeshAsync("him", "scenes/Dude/", "Dude.babylon", scene).then((result) => {
     var dude = result.meshes[0];
     dude.scaling = new Vector3(0.008, 0.008, 0.008);
 

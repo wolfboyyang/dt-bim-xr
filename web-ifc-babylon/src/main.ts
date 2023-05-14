@@ -7,7 +7,6 @@ import {
   WebXRControllerPointerSelection,
   WebXRSessionManager,
   WebXRState,
-  AbstractMesh,
   Tools,
   FilesInput,
 } from "@babylonjs/core";
