@@ -48,6 +48,9 @@ jobs:
     # build web-ifc-babylon
     - run: cd web-ifc-babylon && npm ci
     - run: cd web-ifc-babylon && npm run build -- --base=dt-bim-xr
+    # build village
+    - run: cd web-ifc-babylon && npm ci
+    - run: cd web-ifc-babylon && npm run build -- --base=dt-bim-xr/village
     - name: Upload a Build Artifact for demo
       uses: actions/upload-artifact@v3
       with:
@@ -58,6 +61,11 @@ jobs:
       with:
           name: web-ifc-babylon
           path: ./web-ifc-babylon/dist
+    - name: Upload a Build Artifact for village
+      uses: actions/upload-artifact@v3
+      with:
+          name: village
+          path: ./village/dist
 
   deploy:
     name: Deploy
@@ -73,6 +81,11 @@ jobs:
         with:
           name: demo
           path: './demo'
+      - name: Download artifact of village
+        uses: actions/download-artifact@v3
+        with:
+          name: village
+          path: './village'
       - name: Download artifact of web-ifc-babylon
         uses: actions/download-artifact@v3
         with:
