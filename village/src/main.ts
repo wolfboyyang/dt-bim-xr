@@ -25,6 +25,8 @@ import {
   ParticleSystem,
   Color4,
   PointerEventTypes,
+  SpotLight,
+  BackgroundMaterial,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 
@@ -54,6 +56,7 @@ import "@babylonjs/loaders/glTF";
   const camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0));
   camera.attachControl(canvas, true);
   const light = new HemisphericLight("light", new Vector3(1, 1, 0), scene);
+  light.intensity = 0.1;
 
   const spriteManagerUFO = new SpriteManager("UFOManager", "https://assets.babylonjs.com/environments/ufo.png", 1, { width: 128, height: 76 }, scene);
   const ufo = new Sprite("ufo", spriteManagerUFO);
@@ -99,7 +102,9 @@ import "@babylonjs/loaders/glTF";
   hitBox.position.y = 0.3;
   hitBox.position.z = -5;
 
-  SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "valleyvillage.glb");
+  SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "valleyvillage.glb").then(() => {
+    (scene.getMeshByName("ground")!.material! as BackgroundMaterial).maxSimultaneousLights = 5;
+  });
 
   let carReady = false;
   SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "car.glb").then(() => {
@@ -274,6 +279,30 @@ import "@babylonjs/loaders/glTF";
         break;
     }
   });
+
+  SceneLoader.ImportMeshAsync("", "https://assets.babylonjs.com/meshes/", "lamp.babylon").then(() =>{
+        const lampLight = new SpotLight("lampLight", Vector3.Zero(), new Vector3(0, -1, 0), 0.8 * Math.PI, 0.01, scene);
+        lampLight.diffuse = Color3.Yellow();
+        lampLight.parent = scene.getMeshByName("bulb")
+
+        const lamp = scene.getMeshByName("lamp")!;
+        lamp.position = new Vector3(2, 0, 2); 
+        lamp.rotation = Vector3.Zero();
+        lamp.rotation.y = -Math.PI / 4;
+
+        const lamp1 = lamp.clone("lamp1", lamp.parent)!;
+        lamp1.position.x = -8;
+        lamp1.position.z = 1.2;
+        lamp1.rotation.y = Math.PI / 2;
+
+        const lamp2 = lamp1.clone("lamp2", lamp.parent)!;
+        lamp2.position.x = -2.7;
+        lamp2.position.z = 0.8;
+        lamp2.rotation.y = -Math.PI / 2;
+
+        const lamp3 = lamp.clone("lamp3", lamp.parent)!;
+        lamp3.position.z = -8;
+    });
 
   //#endregion
 
