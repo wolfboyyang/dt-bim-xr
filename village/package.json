@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@vitejs/plugin-basic-ssl": "^1.0.1",
     "earcut": "^2.2.4",
     "typescript": "^5.0.2",
     "vite": "^4.3.0"

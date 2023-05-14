@@ -2,19 +2,13 @@ import './style.css'
 import {
   Animation,
   Engine,
-  HemisphericLight,
-  PolygonMeshBuilder,
   MeshBuilder,
   Scene,
   Vector3,
-  ArcRotateCamera,
-  Sound,
   StandardMaterial,
   Color3,
   Texture,
-  Vector4,
   Mesh,
-  InstancedMesh,
   SceneLoader,
   Axis,
   Tools,
@@ -29,17 +23,50 @@ import {
   BackgroundMaterial,
   ShadowGenerator,
   DirectionalLight,
+  WebXRSessionManager,
+  DeviceOrientationCamera,
+  WebXRControllerPointerSelection,
 } from "@babylonjs/core";
 import "@babylonjs/loaders/glTF";
 import {
   AdvancedDynamicTexture,
+  Button,
   Control,
   Slider,
   StackPanel,
   TextBlock,
 } from '@babylonjs/gui';
 
+//#region WebXRPolyfill
+
+const xrPolyfillPromise = new Promise<void>((resolve) => {
+  if (navigator.xr) {
+    return resolve();
+  }
+
+  if (window.WebXRPolyfill) {
+    new WebXRPolyfill();
+    return resolve();
+  } else {
+    const url = "https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.js";
+    const s = document.createElement("script");
+    s.src = url;
+    document.head.appendChild(s);
+    s.onload = () => {
+      new WebXRPolyfill();
+      resolve();
+    };
+  }
+});
+
+//#endregion
+
 (async () => {
+  // wait for the polyfill to kick in
+  await xrPolyfillPromise;
+  //console.log(navigator.xr); // should be there!
+  const isVRSupported = await WebXRSessionManager.IsSessionSupportedAsync("immersive-vr");
+  console.log("immersive-vr supported?", isVRSupported);// should be true
 
   // create the canvas html element and attach it to the webpage
   const canvas = <HTMLCanvasElement>document.getElementById("MainCanvas");
@@ -62,7 +89,8 @@ import {
   })
 
   /**** Set camera and light *****/
-  const camera = new ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 15, new Vector3(0, 0, 0));
+  let camera = new DeviceOrientationCamera("deviceCamera", new Vector3(0, 5, -10), scene);
+  camera.setTarget(Vector3.Zero());
   camera.attachControl(canvas, true);
   const light = new DirectionalLight("light", new Vector3(0, -1, 1), scene);
   light.position = new Vector3(0, 50, -100);
@@ -352,6 +380,51 @@ import {
         const lamp3 = lamp.clone("lamp3", lamp.parent)!;
         lamp3.position.z = -8;
     });
+
+  //#endregion
+
+  //#region Setup WebXR
+
+  if (isVRSupported) {
+    const xrHelper = await scene.createDefaultXRExperienceAsync({
+      floorMeshes: [scene.getMeshByName("ground")!]
+    });
+
+    xrHelper.pointerSelection = <WebXRControllerPointerSelection>xrHelper.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
+      gazeCamera: xrHelper.baseExperience.camera,
+      xrInput: xrHelper.input
+    });
+  }
+
+
+  const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
+  const iOS = typeof requestPermission === 'function';
+  if (iOS) {
+    // GUI
+    const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI");
+    const permission_button = Button.CreateSimpleButton("but1", "Enable Rotation");
+    permission_button.width = "150px"
+    permission_button.height = "40px";
+    permission_button.color = "white";
+    permission_button.cornerRadius = 20;
+    permission_button.background = "green";
+    permission_button.verticalAlignment = Control.VERTICAL_ALIGNMENT_BOTTOM;
+    permission_button.onPointerUpObservable.add(async () => {
+
+      const response = await requestPermission();
+      if (response === 'granted') {
+        // execute
+        console.log('motion & rotation permission granted');
+        permission_button.isVisible = false;
+      }
+
+    });
+    advancedTexture.addControl(permission_button);
+  } else {
+    // Motion and rotation not supported or permission not required
+    // Handle the situation accordingly
+    console.log('not iOS or no motion & rotation permission');
+  }
 
   //#endregion
 
