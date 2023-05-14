@@ -213,9 +213,9 @@ import "@babylonjs/loaders/glTF";
   particleSystem.particleTexture = new Texture("textures/flare.png", scene);
 
   // Where the particles come from
-  particleSystem.emitter = new Vector3(-4, 0.9, -6); // the starting object, the emitter
-  particleSystem.minEmitBox = new Vector3(-0.05, 0, 0); // Starting all from
-  particleSystem.maxEmitBox = new Vector3(0.05, 0, 0); // To...
+  particleSystem.emitter = new Vector3(-4, 0.8, -6); // the starting object, the emitter
+  particleSystem.minEmitBox = new Vector3(-0.01, 0, -0.01); // Starting all from
+  particleSystem.maxEmitBox = new Vector3(0.01, 0, 0.01); // To...
 
   // Colors of all particles
   particleSystem.color1 = new Color4(0.7, 0.8, 1.0, 1.0);
@@ -223,12 +223,12 @@ import "@babylonjs/loaders/glTF";
   particleSystem.colorDead = new Color4(0, 0, 0.2, 0.0);
 
   // Size of each particle (random between...
-  particleSystem.minSize = 0.005;
-  particleSystem.maxSize = 0.025;
+  particleSystem.minSize = 0.01;
+  particleSystem.maxSize = 0.05;
 
   // Life time of each particle (random between...
-  particleSystem.minLifeTime = 2;
-  particleSystem.maxLifeTime = 3.5;
+  particleSystem.minLifeTime = 0.3;
+  particleSystem.maxLifeTime = 1.5;
 
   // Emission rate
   particleSystem.emitRate = 1500;
@@ -237,20 +237,16 @@ import "@babylonjs/loaders/glTF";
   particleSystem.blendMode = ParticleSystem.BLENDMODE_ONEONE;
 
   // Set the gravity of all particles
-  particleSystem.gravity = new Vector3(0, -9.81 / 20, 0);
+  particleSystem.gravity = new Vector3(0, -9.81, 0);
 
   // Direction of each particle after it has been emitted
-  particleSystem.direction1 = new Vector3(-2, 8, 2);
-  particleSystem.direction2 = new Vector3(2, 8, -2);
+  particleSystem.direction1 = new Vector3(-1, 8, 1);
+  particleSystem.direction2 = new Vector3(1, 8, -1);
 
-  // Angular speed, in radians
-  particleSystem.minAngularSpeed = 0;
-  particleSystem.maxAngularSpeed = Math.PI;
-
-  // Speed
-  particleSystem.minEmitPower = 0.05;
-  particleSystem.maxEmitPower = 0.15;
-  particleSystem.updateSpeed = 0.025;
+  // Power and speed
+  particleSystem.minEmitPower = 0.2;
+  particleSystem.maxEmitPower = 0.6;
+  particleSystem.updateSpeed = 0.01;
 
   //Switch fountain on and off
   let switched = false;
