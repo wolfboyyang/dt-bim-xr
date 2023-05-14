@@ -49,8 +49,8 @@ jobs:
     - run: cd web-ifc-babylon && npm ci
     - run: cd web-ifc-babylon && npm run build -- --base=dt-bim-xr
     # build village
-    - run: cd web-ifc-babylon && npm ci
-    - run: cd web-ifc-babylon && npm run build -- --base=dt-bim-xr/village
+    - run: cd village && npm ci
+    - run: cd village && npm run build -- --base=dt-bim-xr/village
     - name: Upload a Build Artifact for demo
       uses: actions/upload-artifact@v3
       with:
