@@ -9,6 +9,7 @@ import {
   WebXRState,
   Tools,
   FilesInput,
+  SceneLoader,
 } from "@babylonjs/core";
 
 import {
@@ -17,7 +18,7 @@ import {
   Control,
 } from '@babylonjs/gui';
 
-import { IfcLoader } from './IfcLoader';
+import './IfcLoader';
 
 //#region WebXRPolyfill
 
@@ -99,8 +100,6 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#endregion
 
-  //const env = scene.createDefaultEnvironment();
-
   //#region Setup WebXR
 
   if (isVRSupported) {
@@ -165,35 +164,29 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup IFCLoader
 
+  // useAppend for ifc file.
   const filesInput = new FilesInput(engine, scene, null, null, null, null, function () {
     Tools.ClearLogCache()
-  }, null, null);
+  }, null, null, true);
 
-
-  // Initialize IFC loader
-  const ifc = new IfcLoader();
-  await ifc.initialize();
-
-  let data = await fetch("./test.ifc").then(res => res.arrayBuffer());
-  let mesh = await ifc.load(new Uint8Array(data), scene, true);
+  // load default ifc file
+  await SceneLoader.ImportMeshAsync("", "./", "test.ifc");
 
   // Set up drag and drop for loading files
-  filesInput.onProcessFileCallback = (file: File, name, _extension) => {
+  filesInput.onProcessFileCallback = (_file: File, name, extension) => {
     console.log("Reading file: " + name);
-    file.arrayBuffer().then(async buf => {
-      // delete existing objects
-      try {
-        mesh.dispose();
-      }
-      catch {
-        //
-      }
-      mesh = await ifc.load(new Uint8Array(buf), scene, true);
-    });
+    if (extension != "ifc") return false;
     return true;
   };
 
   filesInput.monitorElementForDragNDrop(canvas);
+
+  // for test: make sure IFC Loader is activated.
+  SceneLoader.OnPluginActivatedObservable.add(function (loader) {
+    if (loader.name === "ifc") {
+      console.log("IFC Loader activated");
+    }
+  });
 
   //#endregion
 
