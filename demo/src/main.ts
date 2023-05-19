@@ -6,6 +6,7 @@ import {
   MeshBuilder,
   Scene,
   Vector3,
+  WebGPUEngine,
   WebXRControllerPointerSelection,
   WebXRSessionManager,
   WebXRState,
@@ -54,7 +55,16 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   //#region Setup engine and scene
 
-  const engine = new Engine(canvas, true);
+  const useWebGPU = !!(navigator as any).gpu;
+  console.log("useWebGPU:", useWebGPU);
+  let engine: Engine;
+  if (useWebGPU) {
+    engine = new WebGPUEngine(canvas);
+    await (engine as WebGPUEngine).initAsync();
+  } else {
+    engine = new Engine(canvas, true);
+  }
+
   // This creates a basic Babylon Scene object (non-mesh)
   const scene = new Scene(engine);
 
