@@ -1,7 +1,7 @@
 // modified from https://github.com/anders-lundgren/web-ifc-babylon/blob/master/src/IfcLoader.ts
 
 import "@babylonjs/loaders/glTF";
-import * as WEBIFC from "web-ifc/web-ifc-api"
+import { IfcAPI } from "web-ifc/web-ifc-api";
 import type {
     AbstractMesh,
     IndicesArray,
@@ -41,7 +41,7 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
     constructor() {
     }
 
-    public ifcAPI = new WEBIFC.IfcAPI();
+    public ifcAPI = new IfcAPI();
 
     async initialize() {
         await this.ifcAPI.Init();
