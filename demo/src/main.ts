@@ -136,7 +136,8 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   }
 
 
-  const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
+  const requestPermission = window.DeviceOrientationEvent != undefined ?
+    (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission : undefined;
   const iOS = typeof requestPermission === 'function';
   if (iOS) {
     // GUI
