@@ -1,14 +1,30 @@
 {
   "name": "web-ifc-babylon",
-  "private": true,
-  "version": "0.0.0",
+  "description": "A Babylon.js Loader for IFC files",
+  "private": false,
+  "version": "0.1.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
+  "files": [
+    "src/IfcLoader.ts"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wolfboyyang/dt-bim-xr"
+  },
+  "keywords": [
+    "bim",
+    "ifc",
+    "babylonjs"
+  ],
+  "author": "Anders Lundgren; WolfboyYang",
+  "license": "MMPL 2.0",
   "devDependencies": {
+    "@types/node": "^20.2.3",
     "@vitejs/plugin-basic-ssl": "^1.0.1",
     "typescript": "^5.0.4",
     "vite": "^4.3.8"
