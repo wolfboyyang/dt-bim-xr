@@ -1,7 +1,7 @@
 // modified from https://github.com/anders-lundgren/web-ifc-babylon/blob/master/src/IfcLoader.ts
 
 import "@babylonjs/loaders/glTF";
-import { IfcAPI } from "web-ifc/web-ifc-api";
+import { Color, IfcAPI, PlacedGeometry } from "web-ifc/web-ifc-api";
 import type {
     AbstractMesh,
     IndicesArray,
@@ -116,8 +116,8 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
     public createPlugin(): ISceneLoaderPluginAsync | ISceneLoaderPlugin {
         return new IfcLoader();
     }
-    
-    
+
+
     /**
      * If the data string can be loaded directly.
      * @returns if the data can be loaded directly
@@ -140,8 +140,8 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
         });
     }
 
-    private async _loadIfcModel(data, scene, mergematerials): Promise<Array<AbstractMesh>> {
-        if(this.ifcAPI.wasmModule == undefined) {
+    private async _loadIfcModel(data: ArrayBuffer, scene: Scene, mergematerials: boolean): Promise<Array<AbstractMesh>> {
+        if (this.ifcAPI.wasmModule == undefined) {
             await this.initialize();
         };
 
@@ -156,9 +156,9 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
         const flatMeshes = this.getFlatMeshes(modelID);
 
         scene.blockMaterialDirtyMechanism = true;
-        scene.useGeometryIdsMap = true;
-        scene.useMaterialMeshMap = true;
-        
+        //scene.useGeometryIdsMap = true;
+        //scene.useMaterialMeshMap = true;
+
         let nodecount = 0;
         let currentnode = 0;
 
@@ -166,18 +166,18 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
         const mainObject = new Mesh("custom", scene);
         mainObject._parentContainer = this._assetContainer;
         scene._blockEntityCollection = false;
-        
-        let meshnode;
 
-        let meshmaterials = new Map <number, Mesh>();
+        let meshnode: TransformNode = new TransformNode("node");
+
+        let meshmaterials = new Map<number, Mesh>();
 
         for (let i = 0; i < flatMeshes.size(); i++) {
             const placedGeometries = flatMeshes.get(i).geometries;
-            if (nodecount++%100 == 0) {
-                currentnode ++;
-                meshnode = new TransformNode ("node" + currentnode, scene);
+            if (nodecount++ % 100 == 0) {
+                currentnode++;
+                meshnode = new TransformNode("node" + currentnode, scene);
                 meshnode.parent = mainObject;
-                meshmaterials = new Map <number, Mesh>();
+                meshmaterials = new Map<number, Mesh>();
             }
             for (let j = 0; j < placedGeometries.size(); j++) {
                 this.getPlacedGeometry(modelID, placedGeometries.get(j), scene, meshnode, meshmaterials, mergematerials)
@@ -187,12 +187,12 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
         return [mainObject];
     }
 
-    getFlatMeshes(modelID) {
+    getFlatMeshes(modelID: number) {
         const flatMeshes = this.ifcAPI.LoadAllGeometry(modelID);
         return flatMeshes;
     }
 
-    async getPlacedGeometry(modelID, placedGeometry, scene, mainObject, meshmaterials, mergematerials) {
+    async getPlacedGeometry(modelID: number, placedGeometry: PlacedGeometry, scene: Scene, mainObject: TransformNode, meshmaterials: Map<number, Mesh>, mergematerials: boolean) {
         const meshgeometry = this.getBufferGeometry(modelID, placedGeometry, scene);
         if (meshgeometry != null) {
             const m = placedGeometry.flatTransformation;
@@ -212,20 +212,20 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
             }
 
             let color = placedGeometry.color;
-            let colorid:number = Math.floor(color.x*256)+Math.floor(color.y*256**2)+Math.floor(color.z*256**3)+Math.floor(color.w*256**4);
+            let colorid: number = Math.floor(color.x * 256) + Math.floor(color.y * 256 ** 2) + Math.floor(color.z * 256 ** 3) + Math.floor(color.w * 256 ** 4);
 
             if (mergematerials && meshmaterials.has(colorid)) {
-                const tempmesh: Mesh = meshmaterials.get(colorid);
+                const tempmesh = meshmaterials.get(colorid) as Mesh;
 
                 meshgeometry.material = tempmesh.material;
-                const mergedmesh = Mesh.MergeMeshes([tempmesh, meshgeometry], true, true);
-                mergedmesh!.name = colorid.toString(16);
+                const mergedmesh = Mesh.MergeMeshes([tempmesh, meshgeometry], true, true)!;
+                mergedmesh.name = colorid.toString(16);
 
-                mergedmesh!.material!.freeze();
-                mergedmesh!.freezeWorldMatrix();
+                mergedmesh.material!.freeze();
+                mergedmesh.freezeWorldMatrix();
 
-                meshmaterials.set(colorid, mergedmesh);
-                mergedmesh!.parent = mainObject;
+                meshmaterials.set(colorid, mergedmesh!);
+                mergedmesh.parent = mainObject;
 
             }
             else {
@@ -237,14 +237,14 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
 
                 meshmaterials.set(colorid, meshgeometry);
                 meshgeometry.parent = mainObject;
-            }        
+            }
 
             return meshgeometry;
         }
         else return null;
     }
 
-     getBufferGeometry(modelID, placedGeometry, scene) {
+    getBufferGeometry(modelID: number, placedGeometry: PlacedGeometry, scene: Scene) {
         const geometry = this.ifcAPI.GetGeometry(modelID, placedGeometry.geometryExpressID);
         if (geometry.GetVertexDataSize() !== 0) {
             const vertices = this.ifcAPI.GetVertexArray(geometry.GetVertexData(), geometry.GetVertexDataSize());
@@ -267,12 +267,12 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
         const positions = new Array(Math.floor(vertices.length / 2));
         const normals = new Array(Math.floor(vertices.length / 2));
         for (let i = 0; i < vertices.length / 6; i++) {
-            positions[i * 3 + 0] = vertices[i * 6 + 0];            
-            positions[i * 3 + 1] = vertices[i * 6 + 1];            
-            positions[i * 3 + 2] = vertices[i * 6 + 2];            
-            normals[i * 3 + 0] = vertices[i * 6 + 3];            
-            normals[i * 3 + 1] = vertices[i * 6 + 4];            
-            normals[i * 3 + 2] = vertices[i * 6 + 5];            
+            positions[i * 3 + 0] = vertices[i * 6 + 0];
+            positions[i * 3 + 1] = vertices[i * 6 + 1];
+            positions[i * 3 + 2] = vertices[i * 6 + 2];
+            normals[i * 3 + 0] = vertices[i * 6 + 3];
+            normals[i * 3 + 1] = vertices[i * 6 + 4];
+            normals[i * 3 + 2] = vertices[i * 6 + 5];
         }
         const vertexData = new VertexData();
         vertexData.positions = positions;
@@ -282,15 +282,15 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
         return vertexData;
     }
 
-    getMeshMaterial(color, scene) {
+    getMeshMaterial(color: Color, scene: Scene) {
         const myMaterial = new StandardMaterial("myMaterial", scene);
 
         myMaterial.emissiveColor = new Color3(color.x, color.y, color.z);
         // if material has alpha - make it fully transparent for performance
-        myMaterial.alpha = (color.w<1.0?0:1);
+        myMaterial.alpha = (color.w < 1.0 ? 0 : 1);
         myMaterial.sideOrientation = Mesh.DOUBLESIDE;
         myMaterial.backFaceCulling = false;
-        myMaterial.disableLighting = true;    
+        myMaterial.disableLighting = true;
 
         return myMaterial;
     }
