@@ -18,7 +18,7 @@ import {
   Control,
 } from '@babylonjs/gui';
 
-import './IfcLoader';
+import 'web-ifc-babylon/loaders/IFC';
 
 //#region WebXRPolyfill
 

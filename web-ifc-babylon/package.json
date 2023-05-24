@@ -1,35 +1,44 @@
 {
   "name": "web-ifc-babylon",
   "description": "A Babylon.js Loader for IFC files",
-  "private": false,
-  "version": "0.1.2",
-  "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
-  },
+  "version": "0.1.9",
+  "main": "loaders/index.js",
+  "module": "loaders/index.js",
+  "types": "loaders/index.d.ts",
   "files": [
-    "src/IfcLoader.ts"
+    "**/*.js",
+    "**/.d.ts",
+    "**/.map",
+    "README.md",
+    "license.md"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wolfboyyang/dt-bim-xr"
+  "scripts": {
+    "build": "npm run clean && npm run compile",
+    "clean": "rimraf dist && rimraf *.tsbuildinfo && rimraf \"./**/*.!(md|json|build.json)\"",
+    "compile": "tsc -b tsconfig.build.json",
+    "repack": "cp package.json *.md dist && cd dist && npm pack",
+    "republish": "cp package.json *.md dist && cd dist && npm publish --access public"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.3",
+    "rimraf": "^5.0.1",
+    "typescript": "^5.0.4",
+    "vite": "^4.3.8"
+  },
+  "dependencies": {
+    "web-ifc": "^0.0.40"
   },
   "keywords": [
     "bim",
     "ifc",
     "babylonjs"
   ],
-  "author": "Anders Lundgren; WolfboyYang",
-  "license": "MMPL 2.0",
-  "devDependencies": {
-    "@types/node": "^20.2.3",
-    "@vitejs/plugin-basic-ssl": "^1.0.1",
-    "typescript": "^5.0.4",
-    "vite": "^4.3.8"
-  },
-  "dependencies": {
-    "web-ifc": "^0.0.40"
+  "license": "Apache-2.0",
+  "esnext": "index.js",
+  "type": "module",
+  "sideEffects": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wolfboyyang/dt-bim-xr"
   }
 }
