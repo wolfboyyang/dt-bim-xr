@@ -1,7 +1,7 @@
 {
   "name": "web-ifc-babylon",
   "description": "A Babylon.js Loader for IFC files",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "main": "loaders/index.js",
   "module": "loaders/index.js",
   "types": "loaders/index.d.ts",

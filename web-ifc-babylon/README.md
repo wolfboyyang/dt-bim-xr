@@ -16,17 +16,24 @@ For usage documentation please visit https://doc.babylonjs.com/extensions and ch
 To install using npm :
 
 ```
-npm i -D web-ifc @web-ifc-babylon/loaders
+npm i -D web-ifc web-ifc-babylon
 ```
 
 # How to use
 
 Afterwards it can be imported to your project using:
 
-```
-import "@web-ifc-babylon/loaders/IFC";
+```js
+import "web-ifc-babylon/loaders/IFC";
 ```
 
 This will extend Babylon's loader plugins to allow the load of ifc files.
+
+Import IFC file just as import .babylon/.glTF/glb file.
+
+```js
+await SceneLoader.ImportMeshAsync("", "./", "test.ifc");
+```
+Check the example at github: https://github.com/wolfboyyang/dt-bim-xr/tree/main/web-ifc-babylon/src/example
 
 For more information you can have a look at our [ES6 dedicated documentation](https://doc.babylonjs.com/features/es6_support).
