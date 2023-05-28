@@ -44,13 +44,13 @@ jobs:
     - run: npm ci
     # build demo
     - run: cd demo && npm ci
-    - run: cd demo && npm run build -- --base=dt-bim-xr/demo
+    - run: cd demo && npm run build -- --base=/dt-bim-xr/demo
     # build web-ifc-babylon example
     - run: cd web-ifc-babylon/example && npm ci
-    - run: cd web-ifc-babylon/example && npm run build -- --base=dt-bim-xr
+    - run: cd web-ifc-babylon/example && npm run build -- --base=/dt-bim-xr
     # build village
     - run: cd village && npm ci
-    - run: cd village && npm run build -- --base=dt-bim-xr/village
+    - run: cd village && npm run build -- --base=/dt-bim-xr/village
     - name: Upload a Build Artifact for demo
       uses: actions/upload-artifact@v3
       with:
