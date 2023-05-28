@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
+        "baseUrl": ".",
+        "importHelpers": true,
         "moduleResolution": "node",
         "module": "ES2020",
         "target": "ESNext",
@@ -15,14 +17,27 @@
         "strictFunctionTypes": true,
         "skipLibCheck": true,
         "removeComments": false,
+        "lib": [
+            "ESNext",
+            "DOM"
+        ],
+
         "composite": true,
         "outDir": "./dist",
         "rootDir": "./src",
         "paths": {
-            "loaders/*": ["./src/loaders/*"],
+            "loaders/*": [
+                "src/loaders/*"
+            ],
         }
     },
-
-    "include": ["./src/**/*.ts", "./src/**/*.tsx"],
-    "exclude": ["**/node_modules", "**/dist", "**/example"]
+    "include": [
+        "./src/**/*.ts",
+        "./src/**/*.tsx"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/dist",
+        "**/example"
+    ]
 }

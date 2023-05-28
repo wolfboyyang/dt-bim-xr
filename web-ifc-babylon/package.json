@@ -1,14 +1,14 @@
 {
   "name": "web-ifc-babylon",
   "description": "A Babylon.js Loader for IFC files",
-  "version": "0.1.10",
-  "main": "loaders/index.js",
-  "module": "loaders/index.js",
-  "types": "loaders/index.d.ts",
+  "version": "0.1.11",
+  "main": "index.js",
+  "module": "index.js",
+  "types": "index.d.ts",
   "files": [
     "**/*.js",
-    "**/.d.ts",
-    "**/.map",
+    "**/*.d.ts",
+    "**/*.map",
     "README.md",
     "license.md"
   ],
@@ -16,8 +16,8 @@
     "build": "npm run clean && npm run compile",
     "clean": "rimraf dist && rimraf *.tsbuildinfo && rimraf \"./**/*.!(md|json|build.json)\"",
     "compile": "tsc -b tsconfig.build.json",
-    "repack": "cp package.json *.md dist && cd dist && npm pack",
-    "republish": "cp package.json *.md dist && cd dist && npm publish --access public"
+    "pack": "cp package.json *.md dist && cd dist && npm pack",
+    "publish": "cp package.json *.md dist && cd dist && npm publish --access public"
   },
   "devDependencies": {
     "@types/node": "^20.2.3",
