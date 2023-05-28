@@ -12,6 +12,6 @@
     "@vitejs/plugin-basic-ssl": "^1.0.1",
     "earcut": "^2.2.4",
     "typescript": "^5.0.4",
-    "vite": "^4.3.8"
+    "vite": "^4.3.9"
   }
 }

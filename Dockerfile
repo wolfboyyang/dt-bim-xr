@@ -11,7 +11,7 @@ RUN npm run build -- --base=/demo
 
 # build web-ifc-babylon
 WORKDIR /app/web-ifc-babylon
-COPY ./web-ifc-babylon/src/example .
+COPY ./web-ifc-babylon/example .
 RUN npm i
 RUN npm run build
 
