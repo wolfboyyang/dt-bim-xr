@@ -10,11 +10,9 @@
   },
   "devDependencies": {
     "@vitejs/plugin-basic-ssl": "^1.0.1",
-    "typescript": "^5.0.2",
-    "vite": "^4.3.0",
-    "web-ifc-babylon": "file:../dist/web-ifc-babylon-0.1.11.tgz"
-  },
-  "dependencies": {
-    "web-ifc": "^0.0.40"
+    "typescript": "^5.0.4",
+    "vite": "^4.3.9",
+    "web-ifc": "^0.0.41",
+    "web-ifc-babylon": "^0.1.13"
   }
 }

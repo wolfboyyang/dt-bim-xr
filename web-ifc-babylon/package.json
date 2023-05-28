@@ -1,7 +1,7 @@
 {
   "name": "web-ifc-babylon",
   "description": "A Babylon.js Loader for IFC files",
-  "version": "0.1.11",
+  "version": "0.1.13",
   "main": "index.js",
   "module": "index.js",
   "types": "index.d.ts",
@@ -16,17 +16,15 @@
     "build": "npm run clean && npm run compile",
     "clean": "rimraf dist && rimraf *.tsbuildinfo && rimraf \"./**/*.!(md|json|build.json)\"",
     "compile": "tsc -b tsconfig.build.json",
-    "pack": "cp package.json *.md dist && cd dist && npm pack",
-    "publish": "cp package.json *.md dist && cd dist && npm publish --access public"
+    "repack": "cp package.json *.md dist && cd dist && npm pack",
+    "republish": "cp package.json *.md dist && cd dist && npm publish --access public"
   },
   "devDependencies": {
-    "@types/node": "^20.2.3",
+    "@types/node": "^20.2.5",
     "rimraf": "^5.0.1",
     "typescript": "^5.0.4",
-    "vite": "^4.3.8"
-  },
-  "dependencies": {
-    "web-ifc": "^0.0.40"
+    "vite": "^4.3.9",
+    "web-ifc": "^0.0.41"
   },
   "keywords": [
     "bim",

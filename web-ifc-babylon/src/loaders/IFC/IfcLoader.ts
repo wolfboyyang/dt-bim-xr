@@ -1,7 +1,7 @@
 // modified from https://github.com/anders-lundgren/web-ifc-babylon/blob/master/src/IfcLoader.ts
 
 import "@babylonjs/loaders/glTF";
-import { Color, IfcAPI, PlacedGeometry } from "web-ifc/web-ifc-api";
+import { Color, IfcAPI, PlacedGeometry } from "web-ifc";
 import type {
     AbstractMesh,
     IndicesArray,
