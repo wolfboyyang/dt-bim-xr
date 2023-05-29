@@ -19,6 +19,12 @@ To install using npm :
 npm i -D web-ifc web-ifc-babylon
 ```
 
+You also need to cp the wasm file from web-ifc to public folder:
+
+```sh
+cp node_modules/web-ifc/web-ifc.wasm public/
+```
+
 # How to use
 
 Afterwards it can be imported to your project using:
@@ -34,6 +40,7 @@ Import IFC file just as import .babylon/.glTF/glb file.
 ```js
 await SceneLoader.ImportMeshAsync("", "./", "test.ifc");
 ```
+
 Check the example at github: https://github.com/wolfboyyang/dt-bim-xr/tree/main/web-ifc-babylon/src/example
 
 For more information you can have a look at our [ES6 dedicated documentation](https://doc.babylonjs.com/features/es6_support).
