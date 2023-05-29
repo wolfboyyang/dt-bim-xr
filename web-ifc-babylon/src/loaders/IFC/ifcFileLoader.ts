@@ -24,7 +24,7 @@ import {
     VertexData,
 } from "@babylonjs/core";
 
-export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFactory {
+export class IFCFileLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFactory {
     /**
      * Defines the name of the plugin.
      */
@@ -114,7 +114,7 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
      * @returns the created plugin
      */
     public createPlugin(): ISceneLoaderPluginAsync | ISceneLoaderPlugin {
-        return new IfcLoader();
+        return new IFCFileLoader();
     }
 
 
@@ -298,5 +298,5 @@ export class IfcLoader implements ISceneLoaderPluginAsync, ISceneLoaderPluginFac
 
 if (SceneLoader) {
     //Add this loader into the register plugin
-    SceneLoader.RegisterPlugin(new IfcLoader());
+    SceneLoader.RegisterPlugin(new IFCFileLoader());
 }

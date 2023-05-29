@@ -1,1 +1,1 @@
-export * from "./IfcLoader";
+export * from "./ifcFileLoader";
