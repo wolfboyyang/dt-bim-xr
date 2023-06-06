@@ -9,22 +9,22 @@ export class IFCUtils {
     isA(entity: any, entity_class: string){
         var test = false;
         if (entity_class){
-            if (this.state.api.GetNameFromTypeCode(entity.type) === entity_class.toUpperCase()){
+            if (this.state.api!.GetNameFromTypeCode(entity.type) === entity_class.toUpperCase()){
                 test = true;
             }
             return test
         }
         else {
-            return this.state.api.GetNameFromTypeCode(entity.type);
+            return this.state.api!.GetNameFromTypeCode(entity.type);
         }
     }
 
     async byId (modelID: number, id: number) {
-        return this.state.api.GetLine(modelID, id);
+        return this.state.api!.GetLine(modelID, id);
     }
 
     async idsByType(modelID: number, entity_class: string){
-        let entities_ids = await this.state.api.GetLineIDsWithType(modelID, Number(this.state.api.GetTypeCodeFromName(modelID,entity_class.toUpperCase())));
+        let entities_ids = await this.state.api!.GetLineIDsWithType(modelID, Number(this.state.api!.GetTypeCodeFromName(entity_class.toUpperCase())));
         return entities_ids
     }
 

@@ -4,8 +4,6 @@ import { Vector } from './Vector';
 import { IfcGeometry } from './IfcGeometry';
 import { FlatMesh } from './FlatMesh';
 import { FlatMeshVector } from './FlatMeshVector';
-import { IFCModel } from '../../components/IFCModel';
-import { MeshReconstructor, SerializedMesh } from './Mesh';
 
 export class Serializer {
 
@@ -62,13 +60,5 @@ export class Serializer {
 
     reconstructFlatMeshVector(vector: SerializedVector): WebIfcVector<WebIfcFlatMesh> {
         return new FlatMeshVector(this, vector);
-    }
-
-    serializeIfcModel(model: IFCModel) {
-        return new SerializedMesh(model);
-    }
-
-    reconstructIfcModel(model: SerializedMesh) {
-        return MeshReconstructor.new(model);
     }
 }

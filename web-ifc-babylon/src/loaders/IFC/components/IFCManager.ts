@@ -1,18 +1,17 @@
-import * as WebIFC from 'web-ifc';
+import { IfcAPI } from 'web-ifc';
 import { IFCParser, ParserAPI, ParserProgress } from './IFCParser';
 import { SubsetManager } from './subsets/SubsetManager';
 import { PropertyManager } from './properties/PropertyManager';
 import { TypeManager } from './TypeManager';
-import { SubsetConfig, IfcState, JSONObject } from '../BaseDefinitions';
-import {BufferGeometry, Material, Matrix4, Scene} from 'three';
+import { SubsetConfig, IfcState } from '../BaseDefinitions';
 import { IFCModel } from './IFCModel';
-import { BvhManager } from './BvhManager';
 import { LoaderSettings } from 'web-ifc';
 import { IFCWorkerHandler } from '../web-workers/IFCWorkerHandler';
 import { PropertyManagerAPI } from './properties/BaseDefinitions';
 import { MemoryCleaner } from './MemoryCleaner';
 import { IFCUtils } from './IFCUtils';
 import { Data } from './sequence/Data'
+import { Material, Mesh } from '@babylonjs/core';
 
 /**
  * Contains all the logic to work with the loaded IFC files (select, edit, etc).
@@ -20,14 +19,13 @@ import { Data } from './sequence/Data'
 export class IFCManager {
     state: IfcState = {
         models: [],
-        api: new WebIFC.IfcAPI(),
+        api: new IfcAPI(),
         useJSON: false,
         worker: { active: false, path: '' }
     };
 
-    BVH = new BvhManager();
-    parser: ParserAPI = new IFCParser(this.state, this.BVH);
-    subsets = new SubsetManager(this.state, this.BVH);
+    parser: ParserAPI = new IFCParser(this.state);
+    subsets = new SubsetManager(this.state);
     utils = new IFCUtils(this.state);
     sequenceData = new Data(this.state);
     properties: PropertyManagerAPI = new PropertyManager(this.state);
@@ -47,11 +45,12 @@ export class IFCManager {
 
     // SETUP - all the logic regarding the configuration of web-ifc-three
 
-    async parse(buffer: ArrayBuffer) {
-        let model = await this.parser.parse(buffer, this.state.coordinationMatrix?.toArray()) as IFCModel;
+    async parse(buffer: ArrayBuffer): Promise<IFCModel> {
+        let model = await this.parser.parse(buffer, this.state.coordinationMatrix);
         model.setIFCManager(this);
         // this.state.useJSON ? await this.disposeMemory() : await this.types.getAllTypes(this.worker);
         // TODO: refactor this
+        
         try {
             await this.types.getAllTypes(this.worker);
         } catch (e) {
@@ -75,17 +74,8 @@ export class IFCManager {
      * @path Relative path to web-ifc.wasm.
      */
     async setWasmPath(path: string) {
-        this.state.api.SetWasmPath(path);
+        this.state.api?.SetWasmPath(path);
         this.state.wasmPath = path;
-    }
-
-    /**
-     * Makes object picking a lot faster
-     * Courtesy of gkjohnson's [work](https://github.com/gkjohnson/three-mesh-bvh).
-     * Import these objects from his library and pass them as arguments. IFC.js takes care of the rest!
-     */
-    setupThreeMeshBVH(computeBoundsTree: any, disposeBoundsTree: any, acceleratedRaycast: any) {
-        this.BVH.initializeMeshBVH(computeBoundsTree, disposeBoundsTree, acceleratedRaycast);
     }
 
     /**
@@ -101,14 +91,15 @@ export class IFCManager {
      * Sets a coordination matrix to be applied when loading geometry.
      * @matrix THREE.Matrix4
      */
-    setupCoordinationMatrix(matrix: Matrix4){
+    setupCoordinationMatrix(matrix: number[]) {
         this.state.coordinationMatrix = matrix;
+        console.log("IFCManager coordination",  this.state.coordinationMatrix);
     }
 
     /**
      * Clears the coordination matrix that is applied when loading geometry.
      */
-    clearCoordinationMatrix(){
+    clearCoordinationMatrix() {
         delete this.state.coordinationMatrix;
     }
 
@@ -137,54 +128,9 @@ export class IFCManager {
             this.state.worker.path = path;
             await this.initializeWorkers();
             const wasm = this.state.wasmPath;
-            if(wasm) await this.setWasmPath(wasm);
+            if (wasm) await this.setWasmPath(wasm);
         } else {
-            this.state.api = new WebIFC.IfcAPI();
-        }
-    }
-
-    /**
-     * @deprecated This approach had sense when the compute-heavy operations were blocking. If you are facing performance issues, you can either use webworkers or use the approach used in web-ifc-viewer to work with JSON and glTF. If you have any question regarding this, check out the docs or ask us direclty.
-     * Enables the JSON mode (which consumes way less memory) and eliminates the WASM data.
-     * Only use this in the following scenarios:
-     * - If you don't need to access the properties of the IFC
-     * - If you will provide the properties as JSON.
-     * @useJSON: Wether to use the JSON mode or not.
-     */
-    async useJSONData(useJSON = true) {
-        this.state.useJSON = useJSON;
-        if (useJSON) {
-            await this.worker?.workerState.updateStateUseJson();
-        }
-    }
-
-    /**
-     * @deprecated This approach had sense when the compute-heavy operations were blocking. If you are facing performance issues, you can either use webworkers or use the approach used in web-ifc-viewer to work with JSON and glTF. If you have any question regarding this, check out the docs or ask us direclty.
-     * Adds the properties of a model as JSON data. If you are using web workers, use
-     * `loadJsonDataFromWorker()` instead to avoid overheads.
-     * @modelID ID of the IFC model.
-     * @data: data as an object where the keys are the expressIDs and the values the properties.
-     */
-    async addModelJSONData(modelID: number, data: { [id: number]: JSONObject }) {
-        const model = this.state.models[modelID];
-        if (!model) throw new Error('The specified model for the JSON data does not exist');
-        if (this.state.worker.active) {
-            await this.worker?.workerState.updateModelStateJsonData(modelID, data);
-        } else {
-            model.jsonData = data;
-        }
-    }
-
-    /**
-     * @deprecated This approach had sense when the compute-heavy operations were blocking. If you are facing performance issues, you can either use webworkers or use the approach used in web-ifc-viewer to work with JSON and glTF. If you have any question regarding this, check out the docs or ask us direclty.
-     * Loads the data of an IFC model from a JSON file directly from a web worker. If you are not using
-     * web workers, use `addModelJSONData()` instead.
-     * @modelID ID of the IFC model.
-     * @path: the path to the JSON file **relative to the web worker file**.
-     */
-    async loadJsonDataFromWorker(modelID: number, path: string) {
-        if (this.state.worker.active) {
-            await this.worker?.workerState.loadJsonDataFromWorker(modelID, path);
+            this.state.api = new IfcAPI();
         }
     }
 
@@ -193,16 +139,12 @@ export class IFCManager {
      * @modelID ID of the IFC model.
      * @scene Scene where the model is (if it's located in a scene).
      */
-    close(modelID: number, scene?: Scene) {
+    close(modelID: number) {
         try {
-            this.state.api.CloseModel(modelID);
-            const mesh = this.state.models[modelID].mesh;
-            const { geometry, material } = mesh;
-            if (scene) scene.remove(mesh);
-            geometry?.dispose();
-            Array.isArray(material) ? material.forEach(m => m.dispose()) : material?.dispose();
+            this.state.api?.CloseModel(modelID);
+            this.state.models[modelID].mesh?.dispose();
             delete this.state.models[modelID];
-        } catch(e) {
+        } catch (e) {
             console.warn(`Close IFCModel ${modelID} failed`);
         }
     }
@@ -213,7 +155,7 @@ export class IFCManager {
      * @geometry The geometry IFC model.
      * @faceIndex The index of the face of a geometry.You can easily get this index using the [Raycaster](https://threejs.org/docs/#api/en/core/Raycaster).
      */
-    getExpressId(geometry: BufferGeometry, faceIndex: number) {
+    getExpressId(geometry: Mesh, faceIndex: number) {
         return this.properties.getExpressId(geometry, faceIndex);
     }
 
@@ -283,8 +225,8 @@ export class IFCManager {
      * @id Express ID of the element.
      */
     getIfcType(modelID: number, id: number) {
-        const typeID = this.state.models[modelID].types[id];
-        return this.state.api.GetNameFromTypeCode(typeID);
+        const typeID = this.state.models[modelID].types![id];
+        return this.state.api?.GetNameFromTypeCode(typeID);
     }
 
     /**
@@ -420,26 +362,8 @@ export class IFCManager {
         IFCModel.dispose();
         await this.cleaner.dispose();
         this.subsets.dispose();
-        if(this.worker && this.state.worker.active) await this.worker.terminate();
+        if (this.worker && this.state.worker.active) await this.worker.terminate();
         (this.state as any) = null;
-    }
-
-    /**
-     * @deprecated This approach had sense when the compute-heavy operations were blocking. If you are facing performance issues, you can either use webworkers or use the approach used in web-ifc-viewer to work with JSON and glTF. If you have any question regarding this, check out the docs or ask us direclty.
-     * Completely releases the WASM memory, thus drastically decreasing the memory use of the app.
-     * Only use this in the following scenarios:
-     * - If you don't need to access the properties of the IFC
-     * - If you will provide the properties as JSON.
-     */
-    async disposeMemory() {
-        if (this.state.worker.active) {
-            await this.worker?.Close();
-        } else {
-            // @ts-ignore
-            this.state.api.Close();
-            (this.state.api as any) = null;
-            this.state.api = new WebIFC.IfcAPI();
-        }
     }
 
     /**
@@ -450,7 +374,7 @@ export class IFCManager {
     }
 
     private async initializeWorkers() {
-        this.worker = new IFCWorkerHandler(this.state, this.BVH);
+        this.worker = new IFCWorkerHandler(this.state);
         this.state.api = this.worker.webIfc;
         this.properties = this.worker.properties;
         await this.worker.parser.setupOptionalCategories(this.parser.optionalCategories);

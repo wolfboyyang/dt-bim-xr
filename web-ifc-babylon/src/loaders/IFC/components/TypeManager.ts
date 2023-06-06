@@ -24,11 +24,11 @@ export class TypeManager {
 
     async getAllTypesOfModel(modelID: number, worker?: IFCWorkerHandler) {
         const result = {};
-        const elements = await this.state.api.GetIfcEntityList(modelID);
+        const elements = await this.state.api?.GetIfcEntityList(modelID)!;
         for(let i = 0; i < elements.length; i++) {
             const element = elements[i];
-            const lines = await this.state.api.GetLineIDsWithType(modelID, element);
-            const size = lines.size();
+            const lines = await this.state.api?.GetLineIDsWithType(modelID, element);
+            const size = lines!.size();
             //@ts-ignore
             for (let i = 0; i < size; i++) result[lines.get(i)] = element;
         }

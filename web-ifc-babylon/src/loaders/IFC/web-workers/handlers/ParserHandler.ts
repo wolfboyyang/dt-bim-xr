@@ -4,7 +4,6 @@ import { IFCWorkerHandler } from '../IFCWorkerHandler';
 import { IFCModel } from '../../components/IFCModel';
 import { Serializer } from '../serializer/Serializer';
 import { ParserResult } from '../workers/ParserWorker';
-import { BvhManager } from '../../components/BvhManager';
 import { DBOperation, IndexedDatabase } from '../../indexedDB/IndexedDatabase';
 import { IFCOPENINGELEMENT, IFCSPACE } from "web-ifc";
 
@@ -19,7 +18,6 @@ export class ParserHandler implements ParserAPI {
 
     constructor(private handler: IFCWorkerHandler,
                 private serializer: Serializer,
-                private BVH: BvhManager,
                 private IDB: IndexedDatabase) {
     }
 
@@ -52,15 +50,9 @@ export class ParserHandler implements ParserAPI {
         };
     }
 
-    // private async getItems(modelID: number) {
-    //     const items = await this.IDB.load(DBOperation.transferIndividualItems);
-    //     this.handler.state.models[modelID].items = this.serializer.reconstructGeometriesByMaterials(items);
-    // }
-
     private async getModel() {
         const serializedModel = await this.IDB.load(DBOperation.transferIfcModel);
         const model = this.serializer.reconstructIfcModel(serializedModel);
-        this.BVH.applyThreeMeshBVH(model.geometry);
         this.handler.state.models[model.modelID].mesh = model;
         return model;
     }

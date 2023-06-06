@@ -1,8 +1,9 @@
 import { PropertyManagerAPI } from '../../components/properties/BaseDefinitions';
 import { IFCWorkerHandler } from '../IFCWorkerHandler';
 import { WorkerActions, WorkerAPIs } from '../BaseDefinitions';
-import { BufferAttribute, BufferGeometry } from 'three';
+import { AbstractMesh, Geometry } from '@babylonjs/core';
 import { IdAttrName } from '../../BaseDefinitions';
+
 
 export class PropertyHandler implements PropertyManagerAPI {
 
@@ -11,11 +12,9 @@ export class PropertyHandler implements PropertyManagerAPI {
     constructor(private handler: IFCWorkerHandler) {
     }
 
-    getExpressId(geometry: BufferGeometry, faceIndex: number) {
-        if (!geometry.index) throw new Error('Geometry does not have index information.');
-        const geoIndex = geometry.index.array;
-        const bufferAttr = geometry.attributes[IdAttrName] as BufferAttribute;
-        return bufferAttr.getX(geoIndex[3 * faceIndex]);
+    getExpressId(geometry: AbstractMesh, _faceIndex: number): number {
+        if (!geometry.name) throw new Error('Geometry does not have index information.');
+        return parseInt(geometry.name);
     }
 
     getHeaderLine(modelID: number, headerType: number): Promise<any[]> {

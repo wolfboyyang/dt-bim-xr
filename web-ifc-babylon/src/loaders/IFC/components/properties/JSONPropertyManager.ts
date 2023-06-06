@@ -24,7 +24,7 @@ export class JSONPropertyManager extends BasePropertyManager implements Property
 
     async getAllItemsOfType(modelID: number, type: number, verbose: boolean) {
         const data = this.state.models[modelID].jsonData;
-        const typeName = await this.state.api.GetNameFromTypeCode(type);
+        const typeName = await this.state.api?.GetNameFromTypeCode(type);
         if (!typeName) {
             throw new Error(`Type not found: ${type}`);
         }

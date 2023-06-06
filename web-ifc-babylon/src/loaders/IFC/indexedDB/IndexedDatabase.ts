@@ -7,14 +7,14 @@ export class IndexedDatabase {
     async save(item: any, id: DBOperation) {
         const open = IndexedDatabase.openOrCreateDB(id);
         this.createSchema(open, id)
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<any>((resolve, _reject) => {
             open.onsuccess = () => this.saveItem(item, open, id, resolve);
         });
     }
 
     async load(id: number) {
         const open = IndexedDatabase.openOrCreateDB(id);
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<any>((resolve, _reject) => {
             open.onsuccess = () => this.loadItem(open, id, resolve);
         })
     }
@@ -54,7 +54,7 @@ export class IndexedDatabase {
         return indexedDB.open(id.toString(), 1);
     }
 
-    private static closeDB(db: IDBDatabase, tx: IDBTransaction, resolve: (value: any) => void) {
+    private static closeDB(db: IDBDatabase, _tx: IDBTransaction, resolve: (value: any) => void) {
         db.close();
         resolve("success");
     }

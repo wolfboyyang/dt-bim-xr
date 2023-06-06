@@ -1,7 +1,4 @@
-import { BufferAttribute, BufferGeometry, Material, Matrix4, Mesh, Object3D } from 'three';
-// TODO: Remove ts ignore comments when @types/three gets updated
-// @ts-ignore
-import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils';
+import type { Material, Matrix, Mesh, Nullable, Scene } from '@babylonjs/core';
 import {
     FlatMesh,
     IfcGeometry,
@@ -19,7 +16,7 @@ export type IdAttributesByMaterials = { [materialID: string]: IdAttributeByMater
 
 //TODO: Rename "scene" to "parent" in the next major release
 export interface BaseSubsetConfig {
-    scene?: Object3D;
+    scene?: Scene;
     ids: number[];
     removePrevious: boolean;
     material?: Material;
@@ -42,9 +39,9 @@ export interface TypesMap {
 
 export interface IfcModel {
     modelID: number;
-    mesh: IfcMesh;
-    types: TypesMap;
-    jsonData: { [id: number]: JSONObject };
+    mesh: Nullable<IfcMesh>;
+    types: Nullable<TypesMap>;
+    jsonData: Record<number, JSONObject>;
 }
 
 export interface JSONObject {
@@ -59,13 +56,13 @@ export interface Worker {
 }
 
 export interface IfcState {
-    models: { [modelID: number]: IfcModel };
-    api: WebIfcAPI;
+    models: Record<number, IfcModel>;
+    api: Nullable<WebIfcAPI>;
     useJSON: boolean;
     worker: Worker;
     webIfcSettings?: LoaderSettings;
     onProgress?: (event: ParserProgress) => void;
-    coordinationMatrix?: Matrix4,
+    coordinationMatrix?: number[],
     wasmPath?: string;
 }
 
@@ -132,7 +129,7 @@ export interface WebIfcAPI {
 
     wasmModule: any;
 
-    Init(): void | Promise<void>;
+    Init(): void | Promise<void>;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
 
     // To close the web worker
     Close?: () => void;
@@ -187,7 +184,7 @@ export interface WebIfcAPI {
 
     GetNameFromTypeCode(type:number): string | Promise<string>;
 
-    GetTypeCodeFromName(modelID: number,typeName:string): number | Promise<number>;
+    GetTypeCodeFromName(typeName:string): number | Promise<number>;
 
     GetIfcEntityList(modelID: number) : Array<number> | Promise<Array<number>>;
 

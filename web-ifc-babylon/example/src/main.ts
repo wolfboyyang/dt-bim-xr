@@ -18,7 +18,8 @@ import {
   Control,
 } from '@babylonjs/gui';
 
-import 'web-ifc-babylon/loaders/IFC';
+//import 'web-ifc-babylon/loaders/IFC';
+import "../../src/loaders/IFC";
 
 //#region WebXRPolyfill
 
@@ -169,7 +170,15 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
     Tools.ClearLogCache()
   }, null, null, true);
 
+  scene.useRightHandedSystem = true;
+  console.log("Right-handed Coordinate system: ", scene.useRightHandedSystem);
+
+  // for test: make sure IFC Loader is activated.
+  if(SceneLoader.IsPluginForExtensionAvailable('.ifc'))
+    console.log("IFC Loader activated");
+  
   // load default ifc file
+
   await SceneLoader.ImportMeshAsync("", "./", "test.ifc");
 
   // Set up drag and drop for loading files
@@ -180,13 +189,6 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   };
 
   filesInput.monitorElementForDragNDrop(canvas);
-
-  // for test: make sure IFC Loader is activated.
-  SceneLoader.OnPluginActivatedObservable.add(function (loader) {
-    if (loader.name === "ifc") {
-      console.log("IFC Loader activated");
-    }
-  });
 
   //#endregion
 

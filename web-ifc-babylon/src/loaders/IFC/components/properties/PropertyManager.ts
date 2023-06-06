@@ -1,12 +1,9 @@
-import {
-    IdAttrName
-} from '../../BaseDefinitions';
 import { IfcState } from '../../BaseDefinitions';
-import { BufferAttribute, BufferGeometry } from 'three';
 import { WebIfcPropertyManager } from './WebIfcPropertyManager';
 import { JSONPropertyManager } from './JSONPropertyManager';
 import { PropertyManagerAPI, PropertyAPI } from './BaseDefinitions';
 import {PropertySerializer} from "./PropertySerializer";
+import { AbstractMesh } from '@babylonjs/core';
 
 /**
  * Contains the logic to get the properties of the items within an IFC model.
@@ -22,14 +19,12 @@ export class PropertyManager implements PropertyManagerAPI {
         this.webIfcProps = new WebIfcPropertyManager(state);
         this.jsonProps = new JSONPropertyManager(state);
         this.currentProps = this.webIfcProps;
-        this.serializer = new PropertySerializer(this.state.api);
+        this.serializer = new PropertySerializer(this.state.api!);
     }
 
-    getExpressId(geometry: BufferGeometry, faceIndex: number) {
-        if (!geometry.index) throw new Error('Geometry does not have index information.');
-        const geoIndex = geometry.index.array;
-        const bufferAttr = geometry.attributes[IdAttrName] as BufferAttribute;
-        return bufferAttr.getX(geoIndex[3 * faceIndex]);
+    getExpressId(geometry: AbstractMesh, faceIndex: number) {
+        if (!geometry.name) throw new Error('Geometry does not have index information.');
+        return parseInt(geometry.name);
     }
 
     async getHeaderLine(modelID: number, headerType: number) {
