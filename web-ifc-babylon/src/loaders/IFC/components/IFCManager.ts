@@ -1,17 +1,15 @@
 import { IfcAPI } from 'web-ifc';
 import { IFCParser, ParserAPI, ParserProgress } from './IFCParser';
-import { SubsetManager } from './subsets/SubsetManager';
+//import { SubsetManager } from './subsets/SubsetManager';
 import { PropertyManager } from './properties/PropertyManager';
 import { TypeManager } from './TypeManager';
 import { SubsetConfig, IfcState } from '../BaseDefinitions';
 import { IFCModel } from './IFCModel';
 import { LoaderSettings } from 'web-ifc';
-import { IFCWorkerHandler } from '../web-workers/IFCWorkerHandler';
 import { PropertyManagerAPI } from './properties/BaseDefinitions';
 import { MemoryCleaner } from './MemoryCleaner';
 import { IFCUtils } from './IFCUtils';
-import { Data } from './sequence/Data'
-import { Material, Mesh } from '@babylonjs/core';
+import type { AssetContainer, Material, Mesh, Nullable, Scene } from '@babylonjs/core';
 
 /**
  * Contains all the logic to work with the loaded IFC files (select, edit, etc).
@@ -25,16 +23,14 @@ export class IFCManager {
     };
 
     parser: ParserAPI = new IFCParser(this.state);
-    subsets = new SubsetManager(this.state);
+    //subsets = new SubsetManager(this.state);
     utils = new IFCUtils(this.state);
-    sequenceData = new Data(this.state);
     properties: PropertyManagerAPI = new PropertyManager(this.state);
     types = new TypeManager(this.state);
 
     useFragments = false;
 
     private cleaner = new MemoryCleaner(this.state);
-    private worker?: IFCWorkerHandler;
 
     /**
      * Returns the underlying web-ifc API.
@@ -45,14 +41,13 @@ export class IFCManager {
 
     // SETUP - all the logic regarding the configuration of web-ifc-three
 
-    async parse(buffer: ArrayBuffer): Promise<IFCModel> {
-        let model = await this.parser.parse(buffer, this.state.coordinationMatrix);
-        model.setIFCManager(this);
-        // this.state.useJSON ? await this.disposeMemory() : await this.types.getAllTypes(this.worker);
-        // TODO: refactor this
+    async parse(buffer: ArrayBuffer, _scene: Scene, _assetContainer: Nullable<AssetContainer>): Promise<IFCModel> {
         
+        const model = await this.parser.parse(buffer, this.state.coordinationMatrix);
+        model.setIFCManager(this);
+
         try {
-            await this.types.getAllTypes(this.worker);
+            await this.types.getAllTypes();
         } catch (e) {
             console.log("Could not get all types of model.");
         }
@@ -108,30 +103,6 @@ export class IFCManager {
      */
     async applyWebIfcConfig(settings: LoaderSettings) {
         this.state.webIfcSettings = settings;
-        if (this.state.worker.active && this.worker) {
-            await this.worker.workerState.updateStateWebIfcSettings();
-        }
-    }
-
-    /**
-     * Uses web workers, making the loader non-blocking.
-     * @active Wether to use web workers or not.
-     * @path Relative path to the web worker file. Necessary if active=true.
-     */
-    async useWebWorkers(active: boolean, path?: string) {
-        if (this.state.worker.active === active) return;
-        // @ts-ignore
-        this.state.api = null;
-        if (active) {
-            if (!path) throw new Error('You must provide a path to the web worker.');
-            this.state.worker.active = active;
-            this.state.worker.path = path;
-            await this.initializeWorkers();
-            const wasm = this.state.wasmPath;
-            if (wasm) await this.setWasmPath(wasm);
-        } else {
-            this.state.api = new IfcAPI();
-        }
     }
 
     /**
@@ -251,7 +222,7 @@ export class IFCManager {
      * @customId Optional identifier of the subset.
      */
     getSubset(modelID: number, material?: Material, customId?: string) {
-        return this.subsets.getSubset(modelID, material, customId);
+        //return this.subsets.getSubset(modelID, material, customId);
     }
 
     /**
@@ -261,7 +232,7 @@ export class IFCManager {
      * @material Material assigned to the subset, if any.
      */
     removeSubset(modelID: number, material?: Material, customID?: string) {
-        this.subsets.removeSubset(modelID, material, customID);
+        //this.subsets.removeSubset(modelID, material, customID);
     }
 
     /**
@@ -275,7 +246,7 @@ export class IFCManager {
      * - **customID**: (optional) custom identifier to distinguish subsets of the same model with the same material.
      */
     createSubset(config: SubsetConfig) {
-        return this.subsets.createSubset(config);
+        //return this.subsets.createSubset(config);
     }
 
     /**
@@ -286,7 +257,7 @@ export class IFCManager {
      * @customID (optional) custom identifier to distinguish subsets of the same model with the same material.
      */
     removeFromSubset(modelID: number, ids: number[], customID?: string, material?: Material) {
-        return this.subsets.removeFromSubset(modelID, ids, customID, material);
+        //return this.subsets.removeFromSubset(modelID, ids, customID, material);
     }
 
     /**
@@ -297,7 +268,7 @@ export class IFCManager {
      * @customID (optional) custom identifier to distinguish subsets of the same model with the same material.
      */
     clearSubset(modelID: number, customID?: string, material?: Material) {
-        return this.subsets.clearSubset(modelID, customID, material);
+        //return this.subsets.clearSubset(modelID, customID, material);
     }
 
 
@@ -314,12 +285,6 @@ export class IFCManager {
     async isA(entity: any, entity_class: string) {
         return this.utils.isA(entity, entity_class);
     }
-
-    async getSequenceData(modelID: number) {
-        await this.sequenceData.load(modelID);
-        return this.sequenceData;
-    }
-
 
     /**
     * Returns the IFC objects filtered by IFC Type and wrapped with the entity_instance class.
@@ -361,8 +326,6 @@ export class IFCManager {
     async dispose() {
         IFCModel.dispose();
         await this.cleaner.dispose();
-        this.subsets.dispose();
-        if (this.worker && this.state.worker.active) await this.worker.terminate();
         (this.state as any) = null;
     }
 
@@ -372,16 +335,5 @@ export class IFCManager {
     getAndClearErrors(modelID: number) {
         return this.parser.getAndClearErrors(modelID);
     }
-
-    private async initializeWorkers() {
-        this.worker = new IFCWorkerHandler(this.state);
-        this.state.api = this.worker.webIfc;
-        this.properties = this.worker.properties;
-        await this.worker.parser.setupOptionalCategories(this.parser.optionalCategories);
-        this.parser = this.worker.parser;
-        await this.worker.workerState.updateStateUseJson();
-        await this.worker.workerState.updateStateWebIfcSettings();
-    }
-
 
 }

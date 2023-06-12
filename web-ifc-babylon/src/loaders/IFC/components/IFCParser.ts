@@ -1,4 +1,4 @@
-import { Color3, Geometry, Material, Matrix, Mesh, Nullable, StandardMaterial, TransformNode, VertexData } from '@babylonjs/core';
+import { Color3, Material, Matrix, Mesh, Nullable, StandardMaterial, VertexData } from '@babylonjs/core';
 import {
     PlacedGeometry,
     Color as ifcColor,
@@ -227,8 +227,6 @@ export class IFCParser implements ParserAPI {
     }
 
     private ifcGeometryToBuffer(expressID: number, vertexData: Float32Array, indexData: Uint32Array): Mesh {
-        const geometry = new Mesh(expressID.toString());
-        geometry.freezeWorldMatrix();
 
         const posFloats = new Float32Array(vertexData.length / 2);
         const normFloats = new Float32Array(vertexData.length / 2);
@@ -248,9 +246,9 @@ export class IFCParser implements ParserAPI {
         data.normals = normFloats;
         data.indices = indexData;
 
-        data.applyToMesh(geometry);
-
-        return geometry;
+        const mesh = new Mesh(expressID.toString());
+        data.applyToMesh(mesh);
+        return mesh;
     }
 
     private getMeshMaterial(color: ifcColor): Material {

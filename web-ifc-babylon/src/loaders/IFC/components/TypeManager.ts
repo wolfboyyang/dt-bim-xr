@@ -1,5 +1,4 @@
 import { IfcState } from '../BaseDefinitions';
-import { IFCWorkerHandler } from '../web-workers/IFCWorkerHandler';
 
 /**
  * Contains the logic to manage the type (e. g. IfcWall, IfcWindow, IfcDoor) of
@@ -11,18 +10,18 @@ export class TypeManager {
         this.state = state;
     }
 
-    async getAllTypes(worker?: IFCWorkerHandler){
+    async getAllTypes(){
 		for (let modelID in this.state.models) {
 			if (this.state.models.hasOwnProperty(modelID)) {
 				const types = this.state.models[modelID].types;
-				if (Object.keys(types).length == 0) {
-					await this.getAllTypesOfModel(parseInt(modelID), worker);
+				if (types !== null && Object.keys(types!).length == 0) {
+					await this.getAllTypesOfModel(parseInt(modelID));
 				}
 			}
 		}
     }
 
-    async getAllTypesOfModel(modelID: number, worker?: IFCWorkerHandler) {
+    async getAllTypesOfModel(modelID: number) {
         const result = {};
         const elements = await this.state.api?.GetIfcEntityList(modelID)!;
         for(let i = 0; i < elements.length; i++) {
@@ -31,11 +30,6 @@ export class TypeManager {
             const size = lines!.size();
             //@ts-ignore
             for (let i = 0; i < size; i++) result[lines.get(i)] = element;
-        }
-        if(this.state.worker.active && worker) {
-            // TODO: When using web workers, store the type information there and request it to the worker
-            // Otherwise the type data is stored in 2 different places at the same time
-            await worker.workerState.updateModelStateTypes(modelID, result);
         }
         this.state.models[modelID].types = result;
     }

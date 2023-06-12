@@ -1,4 +1,4 @@
-import type { Material, Matrix, Mesh, Nullable, Scene } from '@babylonjs/core';
+import type { Material, Mesh, Nullable, Scene } from '@babylonjs/core';
 import {
     FlatMesh,
     IfcGeometry,

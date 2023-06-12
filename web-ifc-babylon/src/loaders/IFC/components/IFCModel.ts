@@ -1,7 +1,5 @@
-//import { BufferGeometry, Material, Mesh, Object3D, Scene } from 'three';
 import { Mesh } from '@babylonjs/core';
-import { IFCManager } from './IFCManager';
-import { BaseSubsetConfig } from '../BaseDefinitions';
+import type { IFCManager } from './IFCManager';
 
 /**
  * Represents an IFC model. This object is returned by the `IFCLoader` after loading an IFC.

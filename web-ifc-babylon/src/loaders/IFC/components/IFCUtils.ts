@@ -38,5 +38,6 @@ export class IFCUtils {
             } 
             return items;
         }
+        return [];
     }
 }

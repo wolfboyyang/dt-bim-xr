@@ -33,6 +33,9 @@ export class IFCFileLoader implements ISceneLoaderPluginAsync, ISceneLoaderPlugi
 
     constructor() {
         this._ifcManager = new IFCManager();
+        this._ifcManager.setOnProgress((event) => {
+            console.log(`${Math.trunc(event.loaded / event.total * 100)}% loaded`);
+        });
     }
 
     public setupCoordinationMatrix(m: number[]) {
@@ -58,7 +61,7 @@ export class IFCFileLoader implements ISceneLoaderPluginAsync, ISceneLoaderPlugi
         }
         else this._ifcManager.clearCoordinationMatrix();
 
-        const model = await this._ifcManager.parse(data);
+        const model = await this._ifcManager.parse(data, scene, this._assetContainer);
         return {
             meshes: [model],
             particleSystems: [],
