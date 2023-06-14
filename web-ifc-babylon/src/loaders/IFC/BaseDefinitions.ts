@@ -1,41 +1,22 @@
-import type { Material, Mesh, Nullable, Scene } from '@babylonjs/core';
-import {
+import type { Mesh, Nullable } from '@babylonjs/core';
+import type {
     FlatMesh,
     IfcGeometry,
+    LoaderError, LoaderSettings, RawLineData, Vector
+} from 'web-ifc';
+import {
     IFCRELAGGREGATES, IFCRELASSOCIATESMATERIAL,
     IFCRELCONTAINEDINSPATIALSTRUCTURE,
     IFCRELDEFINESBYPROPERTIES,
-    IFCRELDEFINESBYTYPE, LoaderError, LoaderSettings, RawLineData, Vector
+    IFCRELDEFINESBYTYPE
 } from 'web-ifc';
-import {ParserProgress} from "./components/IFCParser";
-
-export const IdAttrName = 'expressID';
-
-export type IdAttributeByMaterial = { [id: number]: number };
-export type IdAttributesByMaterials = { [materialID: string]: IdAttributeByMaterial };
-
-//TODO: Rename "scene" to "parent" in the next major release
-export interface BaseSubsetConfig {
-    scene?: Scene;
-    ids: number[];
-    removePrevious: boolean;
-    material?: Material;
-    customID?: string;
-    applyBVH?: boolean;
-}
-
-export interface SubsetConfig extends BaseSubsetConfig {
-    modelID: number;
-}
-
-export const DEFAULT = 'default';
+import type { ParserProgress } from "./components/IFCParser";
 
 export type MapFaceindexID = { [key: number]: number };
 
 export interface TypesMap {
     [key: number]: number;
 }
-
 
 export interface IfcModel {
     modelID: number;

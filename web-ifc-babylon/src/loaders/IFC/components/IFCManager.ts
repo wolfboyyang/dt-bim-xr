@@ -1,15 +1,15 @@
 import { IfcAPI } from 'web-ifc';
-import { IFCParser, ParserAPI, ParserProgress } from './IFCParser';
-//import { SubsetManager } from './subsets/SubsetManager';
+import { IFCParser } from './IFCParser';
+import type { ParserAPI, ParserProgress } from './IFCParser';
 import { PropertyManager } from './properties/PropertyManager';
 import { TypeManager } from './TypeManager';
-import { SubsetConfig, IfcState } from '../BaseDefinitions';
+import type { IfcState } from '../BaseDefinitions';
 import { IFCModel } from './IFCModel';
-import { LoaderSettings } from 'web-ifc';
-import { PropertyManagerAPI } from './properties/BaseDefinitions';
+import type { LoaderSettings } from 'web-ifc';
+import type { PropertyManagerAPI } from './properties/BaseDefinitions';
 import { MemoryCleaner } from './MemoryCleaner';
 import { IFCUtils } from './IFCUtils';
-import type { AssetContainer, Material, Mesh, Nullable, Scene } from '@babylonjs/core';
+import type { AssetContainer, Mesh, Nullable, Scene } from '@babylonjs/core';
 
 /**
  * Contains all the logic to work with the loaded IFC files (select, edit, etc).
@@ -23,7 +23,6 @@ export class IFCManager {
     };
 
     parser: ParserAPI = new IFCParser(this.state);
-    //subsets = new SubsetManager(this.state);
     utils = new IFCUtils(this.state);
     properties: PropertyManagerAPI = new PropertyManager(this.state);
     types = new TypeManager(this.state);
@@ -213,65 +212,6 @@ export class IFCManager {
     getSpatialStructure(modelID: number, includeProperties?: boolean) {
         return this.properties.getSpatialStructure(modelID, includeProperties);
     }
-
-    /**
-     * Gets the mesh of the subset with the specified [material](https://threejs.org/docs/#api/en/materials/Material).
-     * If no material is given, this returns the subset with the original materials.
-     * @modelID ID of the IFC model.
-     * @material Material assigned to the subset (if any).
-     * @customId Optional identifier of the subset.
-     */
-    getSubset(modelID: number, material?: Material, customId?: string) {
-        //return this.subsets.getSubset(modelID, material, customId);
-    }
-
-    /**
-     * Removes the specified subset.
-     * @modelID ID of the IFC model.
-     * @parent The parent where the subset is (can be any `THREE.Object3D`).
-     * @material Material assigned to the subset, if any.
-     */
-    removeSubset(modelID: number, material?: Material, customID?: string) {
-        //this.subsets.removeSubset(modelID, material, customID);
-    }
-
-    /**
-     * Creates a new geometric subset.
-     * @config A configuration object with the following options:
-     * - **scene**: `THREE.Object3D` where the model is located.
-     * - **modelID**: ID of the model.
-     * - **ids**: Express IDs of the items of the model that will conform the subset.
-     * - **removePrevious**: wether to remove the previous subset of this model with this material.
-     * - **material**: (optional) wether to apply a material to the subset.
-     * - **customID**: (optional) custom identifier to distinguish subsets of the same model with the same material.
-     */
-    createSubset(config: SubsetConfig) {
-        //return this.subsets.createSubset(config);
-    }
-
-    /**
-     * Removes the specified items from the geometry of a subset.
-     * @modelID ID of the IFC model.
-     * @ids Express IDs of the items of the model that will conform the subset.
-     * @material (optional) Material assigned to the subset, if any.
-     * @customID (optional) custom identifier to distinguish subsets of the same model with the same material.
-     */
-    removeFromSubset(modelID: number, ids: number[], customID?: string, material?: Material) {
-        //return this.subsets.removeFromSubset(modelID, ids, customID, material);
-    }
-
-    /**
-     * Removes all the geometry of a subset.
-     * @modelID ID of the IFC model.
-     * @ids Express IDs of the items of the model that will conform the subset.
-     * @material (optional) Material assigned to the subset, if any.
-     * @customID (optional) custom identifier to distinguish subsets of the same model with the same material.
-     */
-    clearSubset(modelID: number, customID?: string, material?: Material) {
-        //return this.subsets.clearSubset(modelID, customID, material);
-    }
-
-
 
 
     // UTILITIES - Miscelaneus logic for various purposes
