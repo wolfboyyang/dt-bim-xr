@@ -41,7 +41,7 @@ export class IFCManager {
     // SETUP - all the logic regarding the configuration of web-ifc-three
 
     async parse(buffer: ArrayBuffer, _scene: Scene, _assetContainer: Nullable<AssetContainer>): Promise<IFCModel> {
-        
+
         const model = await this.parser.parse(buffer, this.state.coordinationMatrix);
         model.setIFCManager(this);
 
@@ -87,7 +87,7 @@ export class IFCManager {
      */
     setupCoordinationMatrix(matrix: number[]) {
         this.state.coordinationMatrix = matrix;
-        console.log("IFCManager coordination",  this.state.coordinationMatrix);
+        console.log("IFCManager coordination", this.state.coordinationMatrix);
     }
 
     /**

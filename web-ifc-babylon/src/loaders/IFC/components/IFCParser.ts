@@ -1,14 +1,26 @@
-import { Color3, Material, Matrix, Mesh, Nullable, StandardMaterial, VertexData } from '@babylonjs/core';
+import type {
+    Material,
+    Nullable
+} from '@babylonjs/core';
 import {
+    Color3,
+    Matrix,
+    Mesh,
+    StandardMaterial,
+    VertexData
+} from '@babylonjs/core';
+import type {
     PlacedGeometry,
     Color as ifcColor,
     IfcGeometry,
+    FlatMesh
+} from 'web-ifc';
+import {
     IFCSPACE,
-    FlatMesh,
     IFCOPENINGELEMENT,
     IFCPRODUCTDEFINITIONSHAPE
 } from 'web-ifc';
-import { IfcState, IfcMesh } from '../BaseDefinitions';
+import type { IfcState, IfcMesh } from '../BaseDefinitions';
 
 import { IFCModel } from './IFCModel';
 

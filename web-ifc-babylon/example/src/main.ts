@@ -18,8 +18,8 @@ import {
   Control,
 } from '@babylonjs/gui';
 
-//import 'web-ifc-babylon/loaders/IFC';
-import "../../src/loaders/IFC";
+import 'web-ifc-babylon/loaders/IFC';
+//import "../../src/loaders/IFC";
 
 //#region WebXRPolyfill
 

@@ -1,9 +1,9 @@
 import { BasePropertyManager } from './BasePropertyManager';
 import { IFCPROJECT } from 'web-ifc';
-import { pName } from '../../BaseDefinitions';
-import { PropertyAPI } from './BaseDefinitions';
+import type { pName } from '../../BaseDefinitions';
+import type { PropertyAPI } from './BaseDefinitions';
 
-export class WebIfcPropertyManager extends BasePropertyManager  implements PropertyAPI {
+export class WebIfcPropertyManager extends BasePropertyManager implements PropertyAPI {
     async getItemProperties(modelID: number, id: number, recursive = false) {
         return this.state.api?.GetLine(modelID, id, recursive);
     }

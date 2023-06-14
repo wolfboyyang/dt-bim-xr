@@ -1,15 +1,15 @@
-import { JSONObject, pName } from '../../BaseDefinitions';
+import type { JSONObject, pName } from '../../BaseDefinitions';
 import { BasePropertyManager } from './BasePropertyManager';
 import { IFCPROJECT } from 'web-ifc';
-import { PropertyAPI } from './BaseDefinitions';
+import type { PropertyAPI } from './BaseDefinitions';
 
 export class JSONPropertyManager extends BasePropertyManager implements PropertyAPI {
 
-    async getItemProperties(modelID: number, id: number, recursive = false) {
+    async getItemProperties(modelID: number, id: number, _recursive = false) {
         return { ...this.state.models[modelID].jsonData[id] };
     }
 
-    async getHeaderLine(modelID: number) {
+    async getHeaderLine(_modelID: number) {
         return {};
     }
 

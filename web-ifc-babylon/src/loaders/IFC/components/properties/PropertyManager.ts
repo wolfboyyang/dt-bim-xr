@@ -1,9 +1,9 @@
-import { IfcState } from '../../BaseDefinitions';
+import type { IfcState } from '../../BaseDefinitions';
 import { WebIfcPropertyManager } from './WebIfcPropertyManager';
 import { JSONPropertyManager } from './JSONPropertyManager';
-import { PropertyManagerAPI, PropertyAPI } from './BaseDefinitions';
+import type { PropertyManagerAPI, PropertyAPI } from './BaseDefinitions';
 import {PropertySerializer} from "./PropertySerializer";
-import { AbstractMesh } from '@babylonjs/core';
+import type { AbstractMesh } from '@babylonjs/core';
 
 /**
  * Contains the logic to get the properties of the items within an IFC model.
@@ -22,7 +22,7 @@ export class PropertyManager implements PropertyManagerAPI {
         this.serializer = new PropertySerializer(this.state.api!);
     }
 
-    getExpressId(geometry: AbstractMesh, faceIndex: number) {
+    getExpressId(geometry: AbstractMesh, _faceIndex: number) {
         if (!geometry.name) throw new Error('Geometry does not have index information.');
         return parseInt(geometry.name);
     }

@@ -1,5 +1,5 @@
-import {PropertySerializer} from "./PropertySerializer";
-import { AbstractMesh } from "@babylonjs/core";
+import type { PropertySerializer } from "./PropertySerializer";
+import type { AbstractMesh } from "@babylonjs/core";
 
 export interface PropertyAPI {
     getItemProperties(modelID: number, elementID: number, recursive: boolean): Promise<any>;

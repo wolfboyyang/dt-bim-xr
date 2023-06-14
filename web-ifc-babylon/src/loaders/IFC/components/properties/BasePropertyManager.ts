@@ -1,4 +1,5 @@
-import { IfcState, pName, PropsNames, Node } from '../../BaseDefinitions';
+import type { IfcState, pName, Node } from '../../BaseDefinitions';
+import { PropsNames } from '../../BaseDefinitions';
 
 export class BasePropertyManager {
 
@@ -27,7 +28,7 @@ export class BasePropertyManager {
         if (children == undefined) return;
         const prop = propNames.key as keyof Node;
         const nodes: any[] = [];
-        for(let i = 0; i < children.length; i++){
+        for (let i = 0; i < children.length; i++) {
             const child = children[i];
             let node = this.newNode(modelID, child);
             if (includeProperties) {
@@ -68,7 +69,7 @@ export class BasePropertyManager {
 
     protected getRelated(rel: any, propNames: pName, IDs: number[]) {
         const element = rel[propNames.relating];
-        if(!element) {
+        if (!element) {
             return console.warn(`The object with ID ${rel.expressID} has a broken reference.`);
         }
         if (!Array.isArray(element)) IDs.push(element.value);
@@ -92,15 +93,15 @@ export class BasePropertyManager {
         };
     }
 
-    async getProperty(modelID: number, elementID: number, recursive = false, propName: pName): Promise<any> {
+    async getProperty(_modelID: number, _elementID: number, _recursive = false, _propName: pName): Promise<any> {
     }
 
-    protected async getChunks(modelID: number, chunks: any, propNames: pName): Promise<void> {
+    protected async getChunks(_modelID: number, _chunks: any, _propNames: pName): Promise<void> {
     }
 
-    protected async getItemProperties(modelID: number, expressID: number, recursive = false): Promise<any> {
+    protected async getItemProperties(_modelID: number, _expressID: number, _recursive = false): Promise<any> {
     }
 
-    protected getNodeType(modelID: number, id: number): any {
+    protected getNodeType(_modelID: number, _id: number): any {
     }
 }

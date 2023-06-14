@@ -1,6 +1,6 @@
-import {IFCBUILDING} from 'web-ifc';
-import {WebIfcAPI} from "../../BaseDefinitions";
-import {geometryTypes} from "./GeometryTypes";
+import { IFCBUILDING } from 'web-ifc';
+import type { WebIfcAPI } from "../../BaseDefinitions";
+import { geometryTypes } from "./GeometryTypes";
 
 export class PropertySerializer {
 
@@ -8,7 +8,7 @@ export class PropertySerializer {
     (this.webIfc as any) = null;
   }
 
-  constructor( private webIfc: WebIfcAPI) {
+  constructor(private webIfc: WebIfcAPI) {
   }
 
   /**
