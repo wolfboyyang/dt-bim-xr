@@ -11,6 +11,8 @@ import {
   WebXRSessionManager,
   WebXRState,
   SceneLoader,
+  WebXRFeatureName,
+  Mesh,
 } from "@babylonjs/core";
 
 import {
@@ -61,7 +63,7 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   const useWebGPU = !!(navigator as any).gpu;
   console.log("useWebGPU:", useWebGPU);
   let engine: Engine;
-  if (useWebGPU) {
+  if (useWebGPU && false) {
     engine = new WebGPUEngine(canvas);
     await (engine as WebGPUEngine).initAsync();
   } else {
@@ -104,28 +106,37 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   console.log("Right-handed Coordinate system: ", scene.useRightHandedSystem);
 
   // for test: make sure IFC Loader is activated.
-  if(SceneLoader.IsPluginForExtensionAvailable('.ifc'))
+  if (SceneLoader.IsPluginForExtensionAvailable('.ifc'))
     console.log("IFC Loader activated");
-  
+
   // load default ifc file
 
-  await SceneLoader.ImportMeshAsync("", "./", "test.ifc");
-  
+  const building1 = await SceneLoader.ImportMeshAsync("", "./", "test.ifc") as unknown as Mesh;
+  building1.position = new Vector3(0, 10, 0);
   //#endregion
 
   //#region Setup WebXR
 
   if (isVRSupported) {
-    const xrHelper = await scene.createDefaultXRExperienceAsync({
-      floorMeshes: [ground]
+    const xr = await scene.createDefaultXRExperienceAsync({
+      floorMeshes: [ground],
+      disableTeleportation: true
     });
 
-    xrHelper.pointerSelection = <WebXRControllerPointerSelection>xrHelper.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
-      gazeCamera: xrHelper.baseExperience.camera,
-      xrInput: xrHelper.input
+    xr.pointerSelection = <WebXRControllerPointerSelection>xr.baseExperience.featuresManager.enableFeature(WebXRControllerPointerSelection, 'latest', {
+      gazeCamera: xr.baseExperience.camera,
+      xrInput: xr.input
     });
 
-    xrHelper.baseExperience.onStateChangedObservable.add(async (state) => {
+    const featureManager = xr.baseExperience.featuresManager;
+
+    const movementFeature = featureManager.enableFeature(WebXRFeatureName.MOVEMENT, 'latest', {
+      xrInput: xr.input,
+      // add options here
+      movementOrientationFollowsViewerPose: true, // default true
+    });
+
+    xr.baseExperience.onStateChangedObservable.add(async (state) => {
       switch (state) {
         case WebXRState.IN_XR:
           // XR is initialized and already submitted one frame
