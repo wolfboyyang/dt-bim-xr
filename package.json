@@ -3,9 +3,9 @@
     "vite": "^4.3.9"
   },
   "devDependencies": {
-    "@babylonjs/core": "^6.5.0",
-    "@babylonjs/gui": "^6.5.0",
-    "@babylonjs/inspector": "^6.5.0",
-    "@babylonjs/loaders": "^6.5.0"
+    "@babylonjs/core": "^6.7.0",
+    "@babylonjs/gui": "^6.7.0",
+    "@babylonjs/inspector": "^6.7.0",
+    "@babylonjs/loaders": "^6.7.0"
   }
 }

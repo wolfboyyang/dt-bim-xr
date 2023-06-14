@@ -10,6 +10,7 @@ import {
   WebXRControllerPointerSelection,
   WebXRSessionManager,
   WebXRState,
+  SceneLoader,
 } from "@babylonjs/core";
 
 import {
@@ -17,6 +18,8 @@ import {
   Button,
   Control,
 } from '@babylonjs/gui';
+
+import 'web-ifc-babylon/loaders/IFC';
 
 //#region WebXRPolyfill
 
@@ -94,15 +97,20 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   // Default intensity is 1. Let's dim the light a small amount
   light.intensity = 0.7;
 
-  // Our built-in 'sphere' shape. Params: name, options, scene
-  let sphere = MeshBuilder.CreateSphere("sphere", { diameter: 2, segments: 32 }, scene);
-
-  // Move the sphere upward 1/2 its height
-  sphere.position.y = 1;
-
   // Our built-in 'ground' shape. Params: name, options, scene
-  let ground = MeshBuilder.CreateGround("ground", { width: 6, height: 6 }, scene);
+  let ground = MeshBuilder.CreateGround("ground", { width: 20, height: 20 }, scene);
 
+  scene.useRightHandedSystem = true;
+  console.log("Right-handed Coordinate system: ", scene.useRightHandedSystem);
+
+  // for test: make sure IFC Loader is activated.
+  if(SceneLoader.IsPluginForExtensionAvailable('.ifc'))
+    console.log("IFC Loader activated");
+  
+  // load default ifc file
+
+  await SceneLoader.ImportMeshAsync("", "./", "test.ifc");
+  
   //#endregion
 
   //#region Setup WebXR
@@ -171,10 +179,10 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   //#region Debug Inspector
 
   // hide/show the Inspector
-  if (false) {
+  if (true) {
     window.addEventListener("keydown", async (ev) => {
       // Shift+Ctrl+I
-      if (ev.shiftKey && ev.ctrlKey && ev.code === "KeyI") {
+      if (ev.shiftKey && ev.ctrlKey && ev.code === "KeyJ") {
         await import("@babylonjs/core/Debug/debugLayer");
         await import("@babylonjs/inspector");
         if (scene.debugLayer.isVisible()) {
