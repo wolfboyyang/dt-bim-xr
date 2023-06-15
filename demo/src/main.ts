@@ -130,7 +130,8 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
     const featureManager = xr.baseExperience.featuresManager;
 
-    const movementFeature = featureManager.enableFeature(WebXRFeatureName.MOVEMENT, 'latest', {
+    //const movementFeature = 
+    featureManager.enableFeature(WebXRFeatureName.MOVEMENT, 'latest', {
       xrInput: xr.input,
       // add options here
       movementOrientationFollowsViewerPose: true, // default true
