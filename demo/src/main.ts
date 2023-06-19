@@ -13,7 +13,9 @@ import {
   SceneLoader,
   WebXRFeatureName,
   Mesh,
-} from "@babylonjs/core";
+  FilesInput,
+  Tools,
+} from '@babylonjs/core';
 
 import {
   AdvancedDynamicTexture,
@@ -113,6 +115,21 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   const building1 = await SceneLoader.ImportMeshAsync("", "./", "test.ifc") as unknown as Mesh;
   building1.position = new Vector3(0, 10, 0);
+
+  // useAppend for ifc file.
+  const filesInput = new FilesInput(engine, scene, null, null, null, null, function () {
+    Tools.ClearLogCache()
+  }, null, null, true);
+
+  // Set up drag and drop for loading files
+  filesInput.onProcessFileCallback = (_file: File, name, extension) => {
+    console.log("Reading file: " + name);
+    if (extension == "ifc" || "babylon" || "glb" || "gltf" ) return true;
+    return false;
+  };
+
+  filesInput.monitorElementForDragNDrop(canvas);
+
   //#endregion
 
   //#region Setup WebXR
