@@ -133,7 +133,6 @@ export class IFCParser implements ParserAPI {
         Object.values(this.geometriesByMaterials).forEach(async (geometries) => {
 
             const geometry = await Mesh.MergeMeshesAsync(geometries, true, true) as Mesh;
-            geometry.freezeWorldMatrix();
             geometry.parent = model;
         });
 
