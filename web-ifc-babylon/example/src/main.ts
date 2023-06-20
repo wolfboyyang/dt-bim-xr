@@ -174,21 +174,36 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   console.log("Right-handed Coordinate system: ", scene.useRightHandedSystem);
 
   // for test: make sure IFC Loader is activated.
-  if(SceneLoader.IsPluginForExtensionAvailable('.ifc'))
+  if (SceneLoader.IsPluginForExtensionAvailable('.ifc'))
     console.log("IFC Loader activated");
-  
+
   // load default ifc file
 
-  await SceneLoader.ImportMeshAsync("", "./", "test.ifc");
+  const model = (await SceneLoader.ImportMeshAsync("", "./", "test.ifc")).meshes[0];
+  model.position = new Vector3(-2, -3, 0);
 
   // Set up drag and drop for loading files
   filesInput.onProcessFileCallback = (_file: File, name, extension) => {
     console.log("Reading file: " + name);
-    if (extension != "ifc") return false;
-    return true;
+    if (extension == "ifc") return true;
+    return false;
   };
 
   filesInput.monitorElementForDragNDrop(canvas);
+
+  // hide/show the Inspector
+  window.addEventListener("keydown", async (ev) => {
+    // Shift+Ctrl+I
+    if (ev.shiftKey && ev.ctrlKey && ev.code === "KeyJ") {
+      await import("@babylonjs/core/Debug/debugLayer");
+      await import("@babylonjs/inspector");
+      if (scene.debugLayer.isVisible()) {
+        scene.debugLayer.hide();
+      } else {
+        scene.debugLayer.show();
+      }
+    }
+  });
 
   //#endregion
 
