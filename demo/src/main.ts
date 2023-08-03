@@ -4,7 +4,6 @@ import {
   Engine,
   HemisphericLight,
   MeshBuilder,
-  Node,
   Scene,
   Vector3,
   WebGPUEngine,
@@ -13,7 +12,6 @@ import {
   WebXRState,
   SceneLoader,
   WebXRFeatureName,
-  Mesh,
   FilesInput,
   Tools,
 } from '@babylonjs/core';
