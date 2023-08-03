@@ -1,9 +1,10 @@
 import './style.css'
 import {
+  ArcRotateCamera,
   Engine,
-  DeviceOrientationCamera,
   HemisphericLight,
   MeshBuilder,
+  Node,
   Scene,
   Vector3,
   WebGPUEngine,
@@ -87,10 +88,8 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
   })
 
   // This creates and positions a DeviceOrientationCamera camera (non-mesh)
-  let camera = new DeviceOrientationCamera("deviceCamera", new Vector3(0, 5, -10), scene);
-
-  // This targets the camera to scene origin
-  camera.setTarget(Vector3.Zero());
+  // let camera = new DeviceOrientationCamera("deviceCamera", new Vector3(0, 5, -10), scene);
+  let camera = new ArcRotateCamera("arcRotateCamera", 2, 1.25, 200, Vector3.Zero(), scene);
 
   // This attaches the camera to the canvas
   camera.attachControl(canvas, true);
@@ -113,8 +112,24 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   // load default ifc file
 
-  const building1 = await SceneLoader.ImportMeshAsync("", "./", "test.ifc") as unknown as Mesh;
-  building1.position = new Vector3(0, 10, 0);
+  SceneLoader.ImportMeshAsync("", "./", "test.ifc").then((result) => {
+    var root = result.meshes[0];
+    root.name = "Duplex Model ifc";
+    root.position = new Vector3(-25, -13, 50);
+    root.rotation = new Vector3(0, 1, 0);
+  });
+
+  SceneLoader.ImportMeshAsync("", "./", "yeni campus west_deneme2.glb").then((result) => {
+    var root = result.meshes[0];
+    root.name = "Campus West";
+  });
+
+  SceneLoader.ImportMeshAsync("", "./", "FinalCountDown-2.glb").then((result) => {
+    var root = result.meshes[0];
+    root.name = "FinalCountDown-2";
+    root.position = new Vector3(-60, -12.5, 35);
+    root.rotation = new Vector3(0, 1, 0);
+  });
 
   // useAppend for ifc file.
   const filesInput = new FilesInput(engine, scene, null, null, null, null, function () {
@@ -209,11 +224,12 @@ const xrPolyfillPromise = new Promise<void>((resolve) => {
 
   // hide/show the Inspector
   if (true) {
+    await import("@babylonjs/core/Debug/debugLayer");
+    await import("@babylonjs/inspector");
+
     window.addEventListener("keydown", async (ev) => {
       // Shift+Ctrl+I
       if (ev.shiftKey && ev.ctrlKey && ev.code === "KeyJ") {
-        await import("@babylonjs/core/Debug/debugLayer");
-        await import("@babylonjs/inspector");
         if (scene.debugLayer.isVisible()) {
           scene.debugLayer.hide();
         } else {
